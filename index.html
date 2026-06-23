@@ -103,7 +103,6 @@
         
         .card { padding: 20px; }
 
-        /* Cards menores para a Home */
         .home-top-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .small-card { padding: 15px 10px; display: flex; flex-direction: column; justify-content: center; align-items: center; }
         .small-card h3 { font-size: 0.95rem; margin-bottom: 5px; }
@@ -217,7 +216,7 @@
             <span class="neon-text-blue">Nutri</span><span class="neon-text-green">Scan</span>
         </div>
         <div class="header-actions">
-            <span class="user-greeting">Olá, Fabiano</span>
+            <span class="user-greeting" id="display-user-greeting">Olá, Fabiano</span>
             
             <!-- Botão Sino de Notificação -->
             <button id="btn-notification" class="icon-btn" aria-label="Notificações">
@@ -234,7 +233,7 @@
     <main id="app-container">
 
         <!-- ========================================================== -->
-        <!-- TELA 0: AUTENTICAÇÃO / LOGIN (AGORA ESTÁ ACTIVE) -->
+        <!-- TELA 0: AUTENTICAÇÃO / LOGIN -->
         <!-- ========================================================== -->
         <section id="auth" class="screen active fade-in">
             <div class="card glass text-center mt-2 slide-up">
@@ -243,11 +242,11 @@
                 <form id="login-form">
                     <div class="form-group">
                         <label>E-mail</label>
-                        <input type="email" class="glass-input" placeholder="seu@email.com" value="fabiano@email.com" required>
+                        <input type="email" id="login-email" class="glass-input" placeholder="seu@email.com" required>
                     </div>
                     <div class="form-group">
                         <label>Senha</label>
-                        <input type="password" class="glass-input" placeholder="••••••••" value="senha123" required>
+                        <input type="password" id="login-password" class="glass-input" placeholder="••••••••" required>
                     </div>
                     
                     <button type="button" id="btn-login" class="btn primary-btn glow-effect w-100 mt-1">Entrar</button>
@@ -255,8 +254,7 @@
                 
                 <div class="mt-2">
                     <p class="text-small"><a href="#" class="neon-text-blue" style="text-decoration: none;">Esqueceu a senha?</a></p>
-                    <button class="btn secondary-btn w-100 mt-1">Criar Nova Conta</button>
-                    <button id="btn-admin-access" class="btn w-100 mt-1" style="background: rgba(255,255,255,0.05); color: var(--text-sec);">Painel Admin</button>
+                    <button id="btn-register" class="btn secondary-btn w-100 mt-1">Criar Nova Conta</button>
                 </div>
             </div>
         </section>
@@ -313,7 +311,7 @@
                     </table>
                 </div>
 
-                <button id="btn-voltar-login" class="btn secondary-btn w-100 mt-2">Voltar para Login</button>
+                <button id="btn-voltar-login" class="btn secondary-btn w-100 mt-2">Sair do Painel Admin</button>
             </div>
         </section>
 
@@ -431,7 +429,7 @@
                     </div>
                     
                     <!-- Dados Ocultos para Simplificar UI, mas mantidos para a matemática -->
-                    <input type="hidden" id="nome" value="Fabiano Ferreira de Souza">
+                    <input type="hidden" id="nome" value="Fabiano">
                     <input type="hidden" id="sexo" value="M">
 
                     <button type="button" id="btn-salvar-meta" class="btn primary-btn glow-effect w-100 mt-1">Calcular e Salvar</button>
@@ -459,7 +457,7 @@
                 </div>
             </div>
 
-            <!-- Preview da Foto -->
+            <!-- Preview -->
             <div id="preview-area" class="card glass hidden fade-in text-center mt-2">
                 <div class="image-preview">
                     <img id="real-image-preview" src="" alt="Sua captura">
@@ -590,7 +588,7 @@
             <div class="card glass profile-card text-center slide-up">
                 <div class="avatar-container">
                     <div class="avatar neon-border" id="profile-avatar">
-                        <span id="avatar-initials">FA</span>
+                        <span id="avatar-initials">US</span>
                         <img id="avatar-img" src="" alt="Foto de perfil">
                     </div>
                     <div class="edit-photo-btn" onclick="document.getElementById('photo-upload').click()">
@@ -598,8 +596,8 @@
                     </div>
                 </div>
                 <input type="file" id="photo-upload" accept="image/*" class="hidden">
-                <h2 id="config-nome-display">Fabiano Ferreira de Souza</h2>
-                <div class="mt-1 badge">Status: <span class="neon-text-blue">Free (7 Dias Restantes)</span></div>
+                <h2 id="config-nome-display">Usuário NutriScan</h2>
+                <div class="mt-1 badge" id="status-badge">Status: <span class="neon-text-blue">Free (7 Dias Restantes)</span></div>
             </div>
             
             <div class="card glass mt-2 slide-up" style="animation-delay: 0.1s;">
@@ -673,7 +671,6 @@
             }
         }
 
-        // Função Excluir Histórico de Scans
         function deletarHistorico(event, btnElement) {
             event.stopPropagation(); 
             const item = btnElement.closest('.history-item');
@@ -703,10 +700,8 @@
             const duracaoDias = parseInt(document.getElementById('duracao-dias').value);
             const idade = 30; 
 
-            // Atualiza Nome da Meta na Home
             document.getElementById('display-nome-meta').textContent = nomeMeta || "Sua Meta";
 
-            // Calcula IMC
             if(peso && altura) {
                 const imc = (peso / (altura * altura)).toFixed(1);
                 document.getElementById('display-imc').textContent = imc;
@@ -761,38 +756,67 @@
         }
 
         // ==========================================================
-        // INICIALIZAÇÃO
+        // INICIALIZAÇÃO E AUTENTICAÇÃO
         // ==========================================================
         document.addEventListener('DOMContentLoaded', () => {
 
-            // Animação de Inicialização (Splash)
+            // Animação de Splash
             setTimeout(() => {
                 const splash = document.getElementById('splash-screen');
                 splash.style.opacity = '0';
-                setTimeout(() => { 
-                    splash.classList.add('hidden'); 
-                }, 600);
+                setTimeout(() => { splash.classList.add('hidden'); }, 600);
             }, 2000);
 
             recalcularMatematicaHome();
             inicializarGrafico();
 
-            // TEMA
             const body = document.body;
             document.getElementById('theme-toggle').addEventListener('click', () => {
                 body.classList.toggle('light-mode'); body.classList.toggle('dark-mode');
             });
 
-            // LOGIN E AUTENTICAÇÃO
+            // Lógica de Login
             const btnLogin = document.getElementById('btn-login');
+            const btnRegister = document.getElementById('btn-register');
             const mainHeader = document.getElementById('main-header');
             const mainNav = document.getElementById('main-nav');
+            const loginEmail = document.getElementById('login-email');
+            const loginPwd = document.getElementById('login-password');
             
             btnLogin.addEventListener('click', () => {
-                document.getElementById('auth').classList.remove('active');
-                document.getElementById('home').classList.add('active');
-                mainHeader.classList.remove('hidden');
-                mainNav.classList.remove('hidden');
+                const email = loginEmail.value.trim().toLowerCase();
+                const pwd = loginPwd.value.trim();
+
+                if (email === 'bno229@gmail.com' && pwd === '290519') {
+                    // Acesso ADMIN
+                    document.getElementById('auth').classList.remove('active');
+                    document.getElementById('admin').classList.add('active');
+                } else if (email === 'blackcatwinesloja@gmail.com' && pwd === '290519') {
+                    // Acesso MASTER
+                    document.getElementById('auth').classList.remove('active');
+                    document.getElementById('home').classList.add('active');
+                    mainHeader.classList.remove('hidden');
+                    mainNav.classList.remove('hidden');
+                    
+                    document.getElementById('status-badge').innerHTML = `Status: <span class="neon-text-blue">PRO (Vitalício)</span>`;
+                    document.getElementById('config-nome-display').textContent = "Master Black Cat";
+                    document.getElementById('display-user-greeting').textContent = "Olá, Master";
+                } else {
+                    // Acesso COMUM (Teste Free Trial)
+                    document.getElementById('auth').classList.remove('active');
+                    document.getElementById('home').classList.add('active');
+                    mainHeader.classList.remove('hidden');
+                    mainNav.classList.remove('hidden');
+                    
+                    document.getElementById('status-badge').innerHTML = `Status: <span class="neon-text-blue">Free (7 Dias Restantes)</span>`;
+                    document.getElementById('config-nome-display').textContent = "Usuário Teste";
+                    document.getElementById('display-user-greeting').textContent = "Olá, Usuário";
+                }
+            });
+
+            btnRegister.addEventListener('click', () => {
+                alert("Conta criada com sucesso! Você ganhou 7 dias grátis de acesso total.");
+                btnLogin.click(); 
             });
 
             document.getElementById('btn-logout').addEventListener('click', () => {
@@ -800,16 +824,15 @@
                 document.getElementById('auth').classList.add('active');
                 mainHeader.classList.add('hidden');
                 mainNav.classList.add('hidden');
+                loginEmail.value = "";
+                loginPwd.value = "";
             });
 
-            // ADMIN
-            document.getElementById('btn-admin-access').addEventListener('click', () => {
-                document.getElementById('auth').classList.remove('active');
-                document.getElementById('admin').classList.add('active');
-            });
             document.getElementById('btn-voltar-login').addEventListener('click', () => {
                 document.getElementById('admin').classList.remove('active');
                 document.getElementById('auth').classList.add('active');
+                loginEmail.value = "";
+                loginPwd.value = "";
             });
 
             // NAVEGAÇÃO INTERNA
@@ -824,7 +847,6 @@
                     if(targetId === 'scanner') {
                         document.getElementById('historico-area').classList.remove('hidden');
                     } else {
-                        // Reset do scanner
                         document.getElementById('capture-area').classList.remove('hidden');
                         document.getElementById('preview-area').classList.add('hidden');
                         document.getElementById('loading-area').classList.add('hidden');
@@ -840,13 +862,11 @@
                 });
             });
 
-            // NOTIFICAÇÃO (SINO)
             document.getElementById('btn-notification').addEventListener('click', () => {
                 alert("Lembrete NutriScan: Você já registrou seu peso de hoje?");
-                document.querySelector('.notification-dot').style.display = 'none'; // Some após clicar
+                document.querySelector('.notification-dot').style.display = 'none'; 
             });
 
-            // COMPARTILHAR WHATSAPP
             document.getElementById('btn-share-wa').addEventListener('click', () => {
                 const peso = document.getElementById('display-peso-atual').innerText;
                 const meta = document.getElementById('nome-meta').value || "Minha Meta";
@@ -855,7 +875,6 @@
                 window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`, '_blank');
             });
 
-            // NOVA ANÁLISE SCANEAMENTO
             const btnNovoScan = document.getElementById('btn-novo-scan');
             if(btnNovoScan) {
                 btnNovoScan.addEventListener('click', () => {
@@ -865,7 +884,6 @@
                 });
             }
 
-            // FOTO DE PERFIL
             document.getElementById('photo-upload').addEventListener('change', function(e) {
                 const file = e.target.files[0];
                 if (file) {
@@ -879,7 +897,6 @@
                 }
             });
 
-            // SALVAR METAS
             document.getElementById('btn-salvar-meta').addEventListener('click', () => {
                 recalcularMatematicaHome();
                 const btn = document.getElementById('btn-salvar-meta');
@@ -893,7 +910,6 @@
                 }, 1200);
             });
 
-            // ATUALIZAR PESO E GRÁFICO
             document.getElementById('btn-atualizar-peso').addEventListener('click', () => {
                 const novoPeso = parseFloat(document.getElementById('input-novo-peso').value);
                 if(novoPeso) {
@@ -910,9 +926,7 @@
                 }
             });
 
-            // ==========================================================
-            // CÂMERA E TESSERACT.JS (OCR)
-            // ==========================================================
+            // OCR
             const cameraInput = document.getElementById('camera-input');
             const galleryInput = document.getElementById('gallery-input');
             const realPreview = document.getElementById('real-image-preview');

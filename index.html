@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NutriScan AI - Otimização Inteligente</title>
     
+    <!-- Integração PWA -->
+    <link rel="manifest" href="./manifest.json">
+    <meta name="theme-color" content="#0B0F1A">
+    <link rel="apple-touch-icon" href="./icon-192.png">
+
     <!-- Motor OCR Tesseract.js (Carregado via CDN) -->
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 
@@ -77,7 +82,7 @@
         .secondary-btn { background: transparent; border: 1px solid var(--neon-blue); color: var(--neon-blue); }
         .btn:active { transform: scale(0.96); }
         .glow-effect:hover { box-shadow: 0 0 20px rgba(0, 229, 255, 0.8); }
-        .icon-btn { background: transparent; border: none; color: var(--text-main); cursor: pointer; }
+        .icon-btn { background: transparent; border: none; color: var(--text-main); cursor: pointer; display: flex; align-items: center; justify-content: center; }
 
         .form-group { margin-bottom: 15px; text-align: left; }
         .form-group label { display: block; margin-bottom: 6px; font-size: 0.85rem; color: var(--text-sec); font-weight: 500; }
@@ -112,9 +117,12 @@
         .history-info h4 { margin: 0; font-size: 1rem; }
         .history-info .date { font-size: 0.75rem; color: var(--text-sec); }
         .history-score { font-size: 1.2rem; font-weight: bold; }
+        .history-actions { display: flex; align-items: center; gap: 12px; }
+        .delete-btn { padding: 6px; border-radius: 8px; background: rgba(252, 129, 129, 0.1); transition: 0.3s; }
+        .delete-btn:hover { background: rgba(252, 129, 129, 0.3); }
 
         /* ==========================================================================
-           SCANNER E RESULTADOS (OCR)
+           SCANNER E RESULTADOS
            ========================================================================== */
         .scanner-box { padding: 40px 20px; }
         .scanner-icon { width: 80px; height: 80px; margin: 0 auto 20px; background: rgba(0, 229, 255, 0.1); border-radius: 50%; display: flex; justify-content: center; align-items: center; animation: pulse 2s infinite; }
@@ -127,17 +135,29 @@
         .clean-list { list-style: none; text-align: left; margin-top: 10px;}
         .clean-list li { margin-bottom: 8px; font-size: 0.9rem; display: flex; align-items: flex-start; gap: 8px;}
         .clean-list li::before { content: "•"; color: var(--text-sec); }
-        
-        .ocr-box { background: rgba(0,0,0,0.2); padding: 15px; border-radius: 8px; border: 1px solid var(--glass-border); font-family: monospace; font-size: 0.8rem; color: var(--text-sec); text-align: left; max-height: 150px; overflow-y: auto; white-space: pre-wrap;}
 
         /* ==========================================================================
-           TELA CONFIG E FOTO DE PERFIL
+           TELAS SECUNDÁRIAS (PLANOS E CONFIG)
            ========================================================================== */
+        .plan-card { position: relative; border: 2px solid transparent; }
+        .pro-plan { border-color: var(--neon-blue); }
+        .pro-badge { position: absolute; top: -12px; right: 20px; padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; letter-spacing: 1px; }
+        .price { font-size: 2rem; font-weight: bold; margin: 15px 0; }
+        .plan-features { list-style: none; margin-bottom: 20px; text-align: left; }
+        .plan-features li { padding: 8px 0; border-bottom: 1px solid var(--glass-border); font-size: 0.9rem; }
+        .plan-features li:last-child { border-bottom: none; }
+        .plan-features li::before { content: "✓ "; color: var(--neon-green); font-weight: bold; }
+        
+        .profile-card { padding: 30px 20px; position: relative; }
         .avatar-container { position: relative; width: 80px; height: 80px; margin: 0 auto 15px; }
         .avatar { width: 100%; height: 100%; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 1.5rem; font-weight: bold; background: var(--card-bg); overflow: hidden; position: relative; }
         .avatar img { width: 100%; height: 100%; object-fit: cover; display: none; }
         .edit-photo-btn { position: absolute; bottom: -5px; right: -5px; background: var(--neon-blue); border-radius: 50%; width: 28px; height: 28px; display: flex; justify-content: center; align-items: center; cursor: pointer; box-shadow: 0 0 10px rgba(0, 229, 255, 0.5); }
-        
+        .badge { display: inline-block; padding: 5px 15px; border-radius: 20px; background: rgba(0, 229, 255, 0.1); font-size: 0.85rem; }
+        .settings-list { list-style: none; }
+        .settings-item { display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid var(--glass-border); cursor: pointer; }
+        .settings-item:last-child { border-bottom: none; }
+
         /* ==========================================================================
            NAVBAR
            ========================================================================== */
@@ -236,34 +256,59 @@
             <h3 class="section-title mt-2">Histórico Recente</h3>
             <p class="text-sec text-small mb-1">Clique em um item para rever a análise.</p>
             <div class="history-list">
+                
                 <div class="history-item card glass slide-up" style="animation-delay: 0.2s;" onclick="abrirRelatorio()">
                     <div class="history-info">
                         <h4>Whey Protein Concentrado</h4>
                         <span class="date">Hoje, 09:30</span>
                     </div>
-                    <div class="history-score neon-text-green">9.1</div>
+                    <div class="history-actions">
+                        <div class="history-score neon-text-green">9.1</div>
+                        <button class="icon-btn delete-btn" onclick="deletarHistorico(event, this)" aria-label="Excluir">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FC8181" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                        </button>
+                    </div>
                 </div>
+
                 <div class="history-item card glass slide-up" style="animation-delay: 0.3s;" onclick="abrirRelatorio()">
                     <div class="history-info">
                         <h4>Creatina Monohidratada</h4>
                         <span class="date">Ontem, 18:15</span>
                     </div>
-                    <div class="history-score neon-text-blue">9.5</div>
+                    <div class="history-actions">
+                        <div class="history-score neon-text-blue">9.5</div>
+                        <button class="icon-btn delete-btn" onclick="deletarHistorico(event, this)" aria-label="Excluir">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FC8181" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                        </button>
+                    </div>
                 </div>
+
                 <div class="history-item card glass slide-up" style="animation-delay: 0.4s;" onclick="abrirRelatorio()">
                     <div class="history-info">
                         <h4>Iogurte Grego</h4>
                         <span class="date">Ontem, 14:00</span>
                     </div>
-                    <div class="history-score neon-text-green">8.8</div>
+                    <div class="history-actions">
+                        <div class="history-score neon-text-green">8.8</div>
+                        <button class="icon-btn delete-btn" onclick="deletarHistorico(event, this)" aria-label="Excluir">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FC8181" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                        </button>
+                    </div>
                 </div>
+
                 <div class="history-item card glass slide-up" style="animation-delay: 0.5s;" onclick="abrirRelatorio()">
                     <div class="history-info">
                         <h4>Biscoito Recheado</h4>
                         <span class="date">12 Mai, 10:20</span>
                     </div>
-                    <div class="history-score text-danger">3.2</div>
+                    <div class="history-actions">
+                        <div class="history-score text-danger">3.2</div>
+                        <button class="icon-btn delete-btn" onclick="deletarHistorico(event, this)" aria-label="Excluir">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FC8181" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                        </button>
+                    </div>
                 </div>
+
             </div>
         </section>
 
@@ -331,7 +376,7 @@
                 <div class="scanner-icon">
                     <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="var(--neon-blue)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
                 </div>
-                <h2>Análise OCR</h2>
+                <h2>Análise Inteligente</h2>
                 <p class="text-sec">Fotografe a tabela nutricional ou ingredientes</p>
                 <div class="btn-group mt-2">
                     <input type="file" id="camera-input" accept="image/*" capture="environment" class="hidden">
@@ -347,7 +392,7 @@
                 <div class="image-preview">
                     <img id="real-image-preview" src="" alt="Sua captura">
                 </div>
-                <button id="btn-analisar" class="btn primary-btn glow-effect mt-2 w-100">🧠 Extrair Texto e Analisar</button>
+                <button id="btn-analisar" class="btn primary-btn glow-effect mt-2 w-100">🧠 Extrair e Analisar</button>
             </div>
 
             <!-- Loading do OCR -->
@@ -357,18 +402,12 @@
                 <p class="text-sec mt-1" id="ocr-progress-text">Carregando motor Tesseract.js (0%)</p>
             </div>
 
-            <!-- Laudo Completo e Texto Extraído -->
+            <!-- Laudo Completo -->
             <div id="result-area" class="hidden fade-in mt-1">
                 <div class="card glass text-center result-header">
                     <h2 class="neon-text-blue">Laudo da Análise</h2>
-                    
-                    <div class="mt-2 text-left">
-                        <h4 class="text-sec">Texto Extraído da Imagem:</h4>
-                        <div class="ocr-box" id="ocr-raw-output">Simulação: A leitura real da câmera aparecerá aqui.</div>
-                    </div>
                 </div>
 
-                <!-- OS 4 CARDS RESTAURADOS -->
                 <div class="result-grid mt-2">
                     <!-- Benefícios -->
                     <div class="card glass slide-up" style="animation-delay: 0.1s; border-left: 4px solid var(--neon-green);">
@@ -379,9 +418,9 @@
                         </ul>
                     </div>
                     
-                    <!-- Malefícios / Alertas -->
+                    <!-- Atenção -->
                     <div class="card glass slide-up" style="animation-delay: 0.2s; border-left: 4px solid #F6AD55;">
-                        <h3 class="text-warning">⚠ Malefícios / Atenção</h3>
+                        <h3 class="text-warning">⚠ Atenção</h3>
                         <ul class="clean-list">
                             <li>Contém lactose (Pode causar inchaço se você tiver sensibilidade).</li>
                             <li>Presença de adoçantes artificiais.</li>
@@ -408,7 +447,6 @@
                     </div>
                 </div>
                 
-                <!-- BOTÃO DE NOVA ANÁLISE RESTAURADO -->
                 <button id="btn-novo-scan" class="btn secondary-btn mt-2 w-100">Fazer Nova Análise</button>
             </div>
         </section>
@@ -418,10 +456,27 @@
         <!-- ========================================================== -->
         <section id="plans" class="screen fade-in">
             <h2 class="text-center mb-2">Evolua seus Resultados</h2>
+            
             <div class="plan-card card glass slide-up">
-                <div class="pro-badge neon-bg-blue text-dark">PRO</div>
-                <h3 class="neon-text-blue">NutriScan Premium</h3>
+                <h3>Plano Starter</h3>
+                <div class="price">R$ 9,90<span class="text-sec">/mês</span></div>
+                <ul class="plan-features">
+                    <li>Scanner nutricional</li>
+                    <li>Histórico ilimitado</li>
+                    <li>Comparação de produtos</li>
+                </ul>
+                <button class="btn secondary-btn w-100">Plano Atual</button>
+            </div>
+
+            <div class="plan-card card glass pro-plan slide-up mt-2" style="animation-delay: 0.2s;">
+                <div class="pro-badge neon-bg-blue text-dark">RECOMENDADO</div>
+                <h3 class="neon-text-blue">Plano PRO</h3>
                 <div class="price neon-text-blue">R$ 17,90<span class="text-sec">/mês</span></div>
+                <ul class="plan-features">
+                    <li>Cálculo de IMC e TDEE</li>
+                    <li>Metas super precisas</li>
+                    <li>Plano alimentar gerado por IA</li>
+                </ul>
                 <button class="btn primary-btn glow-effect w-100 mt-1">Assinar Agora</button>
             </div>
         </section>
@@ -444,9 +499,12 @@
                 <h2 id="config-nome-display">Fabiano Ferreira de Souza</h2>
                 <div class="mt-1 badge">Plano: <span class="neon-text-blue">Free</span></div>
             </div>
+            
             <div class="card glass mt-2 slide-up" style="animation-delay: 0.1s;">
                 <ul class="settings-list">
+                    <li class="settings-item" id="btn-toggle-theme-list"><span>🌓 Alternar Tema</span><span class="text-sec">></span></li>
                     <li class="settings-item"><span>🔒 Privacidade e Segurança</span><span class="text-sec">></span></li>
+                    <li class="settings-item"><span>📄 Termos de Uso</span><span class="text-sec">></span></li>
                     <li class="settings-item text-danger"><span>🚪 Sair da Conta</span><span class="text-sec">></span></li>
                 </ul>
             </div>
@@ -469,6 +527,16 @@
     <!-- JAVASCRIPT EMBUTIDO -->
     <!-- ========================================================== -->
     <script>
+        // Função Global para excluir item do histórico sem abrir o laudo
+        function deletarHistorico(event, btnElement) {
+            event.stopPropagation(); 
+            const item = btnElement.closest('.history-item');
+            item.style.transform = 'scale(0.9)';
+            item.style.opacity = '0';
+            setTimeout(() => { item.remove(); }, 300);
+        }
+
+        // Função Global para abrir um item do histórico
         function abrirRelatorio() {
             document.querySelector('.nav-item[data-target="scanner"]').click();
             document.getElementById('capture-area').classList.add('hidden');
@@ -489,7 +557,6 @@
             const duracaoDias = parseInt(document.getElementById('duracao-dias').value);
             const idade = 30; 
 
-            // Atualiza texto de dicas de consumo com a meta real
             const metaAtualText = document.getElementById('display-meta-atual');
             if(metaAtualText) metaAtualText.textContent = textoObjetivo;
 
@@ -537,12 +604,15 @@
 
         document.addEventListener('DOMContentLoaded', () => {
 
-            // Calcula logo que a página carrega para não deixar a Home zerada
             recalcularMatematicaHome();
 
             // TEMA
             const body = document.body;
             document.getElementById('theme-toggle').addEventListener('click', () => {
+                body.classList.toggle('light-mode'); body.classList.toggle('dark-mode');
+            });
+            const themeListBtn = document.getElementById('btn-toggle-theme-list');
+            if (themeListBtn) themeListBtn.addEventListener('click', () => {
                 body.classList.toggle('light-mode'); body.classList.toggle('dark-mode');
             });
 
@@ -574,7 +644,7 @@
                 });
             });
 
-            // NOVA ANÁLISE (BOTÃO RESTAURADO)
+            // NOVA ANÁLISE
             const btnNovoScan = document.getElementById('btn-novo-scan');
             if(btnNovoScan) {
                 btnNovoScan.addEventListener('click', () => {
@@ -668,6 +738,7 @@
                 const progressText = document.getElementById('ocr-progress-text');
                 
                 try {
+                    // OCR roda silenciosamente nos bastidores
                     const { data: { text } } = await Tesseract.recognize(
                         currentImageFile,
                         'por',
@@ -685,13 +756,6 @@
                     document.getElementById('loading-area').classList.add('hidden');
                     document.getElementById('result-area').classList.remove('hidden');
                     
-                    const ocrBox = document.getElementById('ocr-raw-output');
-                    if(text.trim() === '') {
-                        ocrBox.textContent = "Não foi possível extrair os dados. Tente uma foto com mais nitidez e iluminação.";
-                    } else {
-                        ocrBox.textContent = text;
-                    }
-
                     const resultCards = document.querySelectorAll('#result-area .slide-up');
                     resultCards.forEach(card => {
                         card.classList.remove('slide-up'); void card.offsetWidth; card.classList.add('slide-up');
@@ -707,6 +771,21 @@
                 }
             });
         });
+
+        // ==========================================================
+        // REGISTRO DO SERVICE WORKER (PWA)
+        // ==========================================================
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(registration => {
+                        console.log('Service Worker registrado com sucesso:', registration.scope);
+                    })
+                    .catch(error => {
+                        console.log('Falha ao registrar o Service Worker:', error);
+                    });
+            });
+        }
     </script>
 </body>
 </html>

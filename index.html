@@ -5,204 +5,69 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NutriScan AI - Otimização Inteligente</title>
     
-    <!-- Motores Externos (OCR e Gráficos) -->
+    <link rel="manifest" href="./manifest.json">
+    <meta name="theme-color" content="#0B0F1A">
+    <link rel="apple-touch-icon" href="./icon-192.png">
+
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
-        /* ==========================================================================
-           VARIÁVEIS DE TEMA E CORES NEON
-           ========================================================================== */
-        :root {
-            --bg-color: #0B0F1A;
-            --card-bg: #121826;
-            --neon-blue: #00E5FF;
-            --neon-green: #00FFB3;
-            --text-main: #FFFFFF;
-            --text-sec: #A0AEC0;
-            --glass-bg: rgba(18, 24, 38, 0.7);
-            --glass-border: rgba(255, 255, 255, 0.08);
-            --nav-glass: rgba(11, 15, 26, 0.9);
-        }
-
-        body.light-mode {
-            --bg-color: #F5F7FA;
-            --card-bg: #FFFFFF;
-            --neon-blue: #0088FF; 
-            --neon-green: #00B884;
-            --text-main: #1A202C;
-            --text-sec: #4A5568;
-            --glass-bg: rgba(255, 255, 255, 0.85);
-            --glass-border: rgba(0, 0, 0, 0.1);
-            --nav-glass: rgba(245, 247, 250, 0.95);
-        }
-
-        /* ==========================================================================
-           RESETS E BASE
-           ========================================================================== */
+        :root { --bg-color: #0B0F1A; --card-bg: #121826; --neon-blue: #00E5FF; --neon-green: #00FFB3; --text-main: #FFFFFF; --text-sec: #A0AEC0; --glass-bg: rgba(18, 24, 38, 0.7); --glass-border: rgba(255, 255, 255, 0.08); --nav-glass: rgba(11, 15, 26, 0.9); }
+        body.light-mode { --bg-color: #F5F7FA; --card-bg: #FFFFFF; --neon-blue: #0088FF; --neon-green: #00B884; --text-main: #1A202C; --text-sec: #4A5568; --glass-bg: rgba(255, 255, 255, 0.85); --glass-border: rgba(0, 0, 0, 0.1); --nav-glass: rgba(245, 247, 250, 0.95); }
+        
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
         body { background-color: var(--bg-color); color: var(--text-main); transition: background-color 0.4s ease, color 0.4s ease; overflow-x: hidden; padding-bottom: 90px; }
-
-        /* ==========================================================================
-           TIPOGRAFIA E UTILITÁRIOS
-           ========================================================================== */
+        
         h2, h3, h4 { margin-bottom: 0.5rem; font-weight: 600; }
-        .text-center { text-align: center; }
-        .text-sec { color: var(--text-sec); }
-        .text-large { font-size: 2rem; font-weight: bold; }
-        .text-huge { font-size: 3rem; font-weight: bold; }
-        .text-small { font-size: 0.85rem; }
-        .text-danger { color: #FC8181; }
-        .text-warning { color: #F6AD55; }
-        .mt-1 { margin-top: 1rem; }
-        .mt-2 { margin-top: 2rem; }
-        .mb-1 { margin-bottom: 1rem; }
-        .mb-2 { margin-bottom: 2rem; }
-        .w-100 { width: 100%; }
-        .hidden { display: none !important; }
-
-        .neon-text-blue { color: var(--neon-blue); text-shadow: 0 0 8px rgba(0, 229, 255, 0.5); }
-        .neon-text-green { color: var(--neon-green); text-shadow: 0 0 8px rgba(0, 255, 179, 0.5); }
-        .neon-bg-blue { background: var(--neon-blue); box-shadow: 0 0 15px rgba(0, 229, 255, 0.6); }
-        .neon-bg-green { background: var(--neon-green); box-shadow: 0 0 15px rgba(0, 255, 179, 0.6); }
-        .text-dark { color: #0B0F1A !important; font-weight: bold; }
-        .neon-border { border: 2px solid var(--neon-blue); box-shadow: 0 0 10px rgba(0, 229, 255, 0.3); }
-
+        .text-center { text-align: center; } .text-sec { color: var(--text-sec); } .text-large { font-size: 2rem; font-weight: bold; } .text-huge { font-size: 3rem; font-weight: bold; } .text-small { font-size: 0.85rem; } .text-danger { color: #FC8181; } .text-warning { color: #F6AD55; }
+        .mt-1 { margin-top: 1rem; } .mt-2 { margin-top: 2rem; } .mb-1 { margin-bottom: 1rem; } .mb-2 { margin-bottom: 2rem; } .w-100 { width: 100%; } .hidden { display: none !important; }
+        
+        .neon-text-blue { color: var(--neon-blue); text-shadow: 0 0 8px rgba(0, 229, 255, 0.5); } .neon-text-green { color: var(--neon-green); text-shadow: 0 0 8px rgba(0, 255, 179, 0.5); } .neon-bg-blue { background: var(--neon-blue); box-shadow: 0 0 15px rgba(0, 229, 255, 0.6); } .neon-bg-green { background: var(--neon-green); box-shadow: 0 0 15px rgba(0, 255, 179, 0.6); } .text-dark { color: #0B0F1A !important; font-weight: bold; } .neon-border { border: 2px solid var(--neon-blue); box-shadow: 0 0 10px rgba(0, 229, 255, 0.3); }
         .glass { background: var(--glass-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid var(--glass-border); border-radius: 16px; box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1); }
-
-        /* ==========================================================================
-           BOTÕES E FORMULÁRIOS
-           ========================================================================== */
+        
         .btn { padding: 12px 24px; border-radius: 12px; border: none; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease; display: inline-block; }
-        .primary-btn { background: linear-gradient(135deg, var(--neon-blue), #0077ff); color: #FFFFFF; }
-        .secondary-btn { background: transparent; border: 1px solid var(--neon-blue); color: var(--neon-blue); }
-        .btn:active { transform: scale(0.96); }
-        .glow-effect:hover { box-shadow: 0 0 20px rgba(0, 229, 255, 0.8); }
+        .primary-btn { background: linear-gradient(135deg, var(--neon-blue), #0077ff); color: #FFFFFF; } .secondary-btn { background: transparent; border: 1px solid var(--neon-blue); color: var(--neon-blue); } .btn:active { transform: scale(0.96); } .glow-effect:hover { box-shadow: 0 0 20px rgba(0, 229, 255, 0.8); }
         .icon-btn { background: transparent; border: none; color: var(--text-main); cursor: pointer; display: flex; align-items: center; justify-content: center; position: relative;}
-        
         .notification-dot { position: absolute; top: 0; right: 0; width: 10px; height: 10px; background-color: #FC8181; border-radius: 50%; box-shadow: 0 0 8px #FC8181; animation: pulse-red 1.5s infinite;}
-
-        .form-group { margin-bottom: 15px; text-align: left; }
-        .form-group label { display: block; margin-bottom: 6px; font-size: 0.85rem; color: var(--text-sec); font-weight: 500; }
+        
+        .form-group { margin-bottom: 15px; text-align: left; } .form-group label { display: block; margin-bottom: 6px; font-size: 0.85rem; color: var(--text-sec); font-weight: 500; }
         .glass-input, .glass-select { width: 100%; padding: 14px; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--glass-border); border-radius: 12px; color: var(--text-main); font-size: 1rem; outline: none; transition: all 0.3s; }
-        body.light-mode .glass-input, body.light-mode .glass-select { background: rgba(0, 0, 0, 0.03); }
-        .glass-input:focus, .glass-select:focus { border-color: var(--neon-blue); box-shadow: 0 0 8px rgba(0, 229, 255, 0.2); }
-        .glass-select option { background-color: var(--card-bg); color: var(--text-main); }
-        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-
-        /* ==========================================================================
-           ESTRUTURA GERAL E LAYOUT
-           ========================================================================== */
+        body.light-mode .glass-input, body.light-mode .glass-select { background: rgba(0, 0, 0, 0.03); } .glass-input:focus, .glass-select:focus { border-color: var(--neon-blue); box-shadow: 0 0 8px rgba(0, 229, 255, 0.2); } .glass-select option { background-color: var(--card-bg); color: var(--text-main); } .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        
         header { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; position: sticky; top: 0; z-index: 100; border-radius: 0 0 20px 20px; }
-        .logo { font-size: 1.2rem; font-weight: bold; }
-        .header-actions { display: flex; align-items: center; gap: 15px; }
+        .logo { font-size: 1.2rem; font-weight: bold; } .header-actions { display: flex; align-items: center; gap: 15px; }
         #app-container { padding: 20px; max-width: 600px; margin: 0 auto; }
+        .screen { display: none; } .screen.active { display: block; } .card { padding: 20px; }
         
-        .screen { display: none; }
-        .screen.active { display: block; }
+        .home-top-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; } .small-card { padding: 15px 10px; display: flex; flex-direction: column; justify-content: center; align-items: center; } .small-card h3 { font-size: 0.95rem; margin-bottom: 5px; } .small-card .text-large { font-size: 1.4rem; }
+        .chart-container { display: flex; flex-direction: column; gap: 12px; margin-top: 1rem;} .chart-row { display: flex; align-items: center; gap: 10px; font-size: 0.85rem;} .chart-label { width: 80px; color: var(--text-sec); } .bar-bg { flex: 1; height: 8px; background: rgba(160, 174, 192, 0.2); border-radius: 4px; overflow: hidden; } .bar-fill { height: 100%; border-radius: 4px; transition: width 1s ease-out; } .chart-value { width: 90px; text-align: right; font-weight: bold; font-size: 0.8rem; }
         
-        .card { padding: 20px; }
-
-        .home-top-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .small-card { padding: 15px 10px; display: flex; flex-direction: column; justify-content: center; align-items: center; }
-        .small-card h3 { font-size: 0.95rem; margin-bottom: 5px; }
-        .small-card .text-large { font-size: 1.4rem; }
-
-        .chart-container { display: flex; flex-direction: column; gap: 12px; margin-top: 1rem;}
-        .chart-row { display: flex; align-items: center; gap: 10px; font-size: 0.85rem;}
-        .chart-label { width: 80px; color: var(--text-sec); }
-        .bar-bg { flex: 1; height: 8px; background: rgba(160, 174, 192, 0.2); border-radius: 4px; overflow: hidden; }
-        .bar-fill { height: 100%; border-radius: 4px; transition: width 1s ease-out; }
-        .chart-value { width: 90px; text-align: right; font-weight: bold; font-size: 0.8rem; }
+        .history-list { display: flex; flex-direction: column; gap: 12px; margin-top: 10px;} .history-item { display: flex; justify-content: space-between; align-items: center; padding: 15px; transition: transform 0.2s; cursor: pointer; } .history-item:hover { border-color: var(--neon-blue); } .history-item:active { transform: scale(0.98); } .history-info h4 { margin: 0; font-size: 1rem; } .history-info .date { font-size: 0.75rem; color: var(--text-sec); } .history-score { font-size: 1.2rem; font-weight: bold; } .history-actions { display: flex; align-items: center; gap: 12px; } .delete-btn { padding: 6px; border-radius: 8px; background: rgba(252, 129, 129, 0.1); transition: 0.3s; } .delete-btn:hover { background: rgba(252, 129, 129, 0.3); }
         
-        .history-list { display: flex; flex-direction: column; gap: 12px; margin-top: 10px;}
-        .history-item { display: flex; justify-content: space-between; align-items: center; padding: 15px; transition: transform 0.2s; cursor: pointer; }
-        .history-item:hover { border-color: var(--neon-blue); }
-        .history-item:active { transform: scale(0.98); }
-        .history-info h4 { margin: 0; font-size: 1rem; }
-        .history-info .date { font-size: 0.75rem; color: var(--text-sec); }
-        .history-score { font-size: 1.2rem; font-weight: bold; }
-        .history-actions { display: flex; align-items: center; gap: 12px; }
-        .delete-btn { padding: 6px; border-radius: 8px; background: rgba(252, 129, 129, 0.1); transition: 0.3s; }
-        .delete-btn:hover { background: rgba(252, 129, 129, 0.3); }
-
-        /* ==========================================================================
-           SCANNER E RESULTADOS
-           ========================================================================== */
-        .scanner-box { padding: 40px 20px; }
-        .scanner-icon { width: 80px; height: 80px; margin: 0 auto 20px; background: rgba(0, 229, 255, 0.1); border-radius: 50%; display: flex; justify-content: center; align-items: center; animation: pulse 2s infinite; }
-        .btn-group { display: flex; flex-direction: column; gap: 10px; }
+        .scanner-box { padding: 40px 20px; } .scanner-icon { width: 80px; height: 80px; margin: 0 auto 20px; background: rgba(0, 229, 255, 0.1); border-radius: 50%; display: flex; justify-content: center; align-items: center; animation: pulse 2s infinite; } .btn-group { display: flex; flex-direction: column; gap: 10px; }
+        .image-preview { width: 100%; height: 250px; border-radius: 12px; border: 2px dashed var(--glass-border); display: flex; justify-content: center; align-items: center; overflow: hidden; background: var(--card-bg); } .image-preview img { width: 100%; height: 100%; object-fit: cover; display: none; }
+        .result-grid { display: grid; grid-template-columns: 1fr; gap: 15px; } .clean-list { list-style: none; text-align: left; margin-top: 10px;} .clean-list li { margin-bottom: 8px; font-size: 0.9rem; display: flex; align-items: flex-start; gap: 8px;} .clean-list li::before { content: "•"; color: var(--text-sec); }
         
-        .image-preview { width: 100%; height: 250px; border-radius: 12px; border: 2px dashed var(--glass-border); display: flex; justify-content: center; align-items: center; overflow: hidden; background: var(--card-bg); }
-        .image-preview img { width: 100%; height: 100%; object-fit: cover; display: none; }
+        .plan-card { position: relative; border: 2px solid transparent; } .pro-plan { border-color: var(--neon-blue); } .pro-badge { position: absolute; top: -12px; right: 20px; padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; letter-spacing: 1px; } .price { font-size: 2rem; font-weight: bold; margin: 15px 0; } .plan-features { list-style: none; margin-bottom: 20px; text-align: left; } .plan-features li { padding: 8px 0; border-bottom: 1px solid var(--glass-border); font-size: 0.9rem; } .plan-features li:last-child { border-bottom: none; } .plan-features li::before { content: "✓ "; color: var(--neon-green); font-weight: bold; }
+        .profile-card { padding: 30px 20px; position: relative; } .avatar-container { position: relative; width: 80px; height: 80px; margin: 0 auto 15px; } .avatar { width: 100%; height: 100%; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 1.5rem; font-weight: bold; background: var(--card-bg); overflow: hidden; position: relative; } .avatar img { width: 100%; height: 100%; object-fit: cover; display: none; } .edit-photo-btn { position: absolute; bottom: -5px; right: -5px; background: var(--neon-blue); border-radius: 50%; width: 28px; height: 28px; display: flex; justify-content: center; align-items: center; cursor: pointer; box-shadow: 0 0 10px rgba(0, 229, 255, 0.5); } .badge { display: inline-block; padding: 5px 15px; border-radius: 20px; background: rgba(0, 229, 255, 0.1); font-size: 0.85rem; } .settings-list { list-style: none; } .settings-item { display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid var(--glass-border); cursor: pointer; } .settings-item:last-child { border-bottom: none; }
+        .admin-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.85rem; } .admin-table th, .admin-table td { padding: 10px; border-bottom: 1px solid var(--glass-border); text-align: left; } .admin-table th { color: var(--neon-blue); }
         
-        .result-grid { display: grid; grid-template-columns: 1fr; gap: 15px; }
-        .clean-list { list-style: none; text-align: left; margin-top: 10px;}
-        .clean-list li { margin-bottom: 8px; font-size: 0.9rem; display: flex; align-items: flex-start; gap: 8px;}
-        .clean-list li::before { content: "•"; color: var(--text-sec); }
-
-        /* ==========================================================================
-           TELAS SECUNDÁRIAS E ADMIN
-           ========================================================================== */
-        .plan-card { position: relative; border: 2px solid transparent; }
-        .pro-plan { border-color: var(--neon-blue); }
-        .pro-badge { position: absolute; top: -12px; right: 20px; padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; letter-spacing: 1px; }
-        .price { font-size: 2rem; font-weight: bold; margin: 15px 0; }
-        .plan-features { list-style: none; margin-bottom: 20px; text-align: left; }
-        .plan-features li { padding: 8px 0; border-bottom: 1px solid var(--glass-border); font-size: 0.9rem; }
-        .plan-features li:last-child { border-bottom: none; }
-        .plan-features li::before { content: "✓ "; color: var(--neon-green); font-weight: bold; }
+        #splash-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-color); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.4s ease; } .splash-logo { font-size: 2.5rem; font-weight: bold; animation: pulse 2s infinite; }
         
-        .profile-card { padding: 30px 20px; position: relative; }
-        .avatar-container { position: relative; width: 80px; height: 80px; margin: 0 auto 15px; }
-        .avatar { width: 100%; height: 100%; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 1.5rem; font-weight: bold; background: var(--card-bg); overflow: hidden; position: relative; }
-        .avatar img { width: 100%; height: 100%; object-fit: cover; display: none; }
-        .edit-photo-btn { position: absolute; bottom: -5px; right: -5px; background: var(--neon-blue); border-radius: 50%; width: 28px; height: 28px; display: flex; justify-content: center; align-items: center; cursor: pointer; box-shadow: 0 0 10px rgba(0, 229, 255, 0.5); }
-        .badge { display: inline-block; padding: 5px 15px; border-radius: 20px; background: rgba(0, 229, 255, 0.1); font-size: 0.85rem; }
-        .settings-list { list-style: none; }
-        .settings-item { display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid var(--glass-border); cursor: pointer; }
-        .settings-item:last-child { border-bottom: none; }
-
-        .admin-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.85rem; }
-        .admin-table th, .admin-table td { padding: 10px; border-bottom: 1px solid var(--glass-border); text-align: left; }
-        .admin-table th { color: var(--neon-blue); }
-
-        /* ==========================================================================
-           SPLASH SCREEN
-           ========================================================================== */
-        #splash-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-color); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.6s ease; }
-        .splash-logo { font-size: 2.5rem; font-weight: bold; animation: pulse 2s infinite; }
-
-        /* ==========================================================================
-           NAVBAR
-           ========================================================================== */
-        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; height: 75px; background: var(--nav-glass); display: flex; justify-content: space-between; align-items: center; border-radius: 20px 20px 0 0; z-index: 1000; padding: 0 10px; transition: transform 0.3s ease;}
-        .nav-item { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: var(--text-sec); cursor: pointer; font-size: 0.75rem; transition: color 0.3s; flex: 1; height: 100%; }
-        .nav-item.active { color: var(--neon-blue); }
-        .nav-item.active svg { stroke: var(--neon-blue); }
-        .scanner-btn-wrapper { position: relative; flex: 1.2; display: flex; flex-direction: column; align-items: center; }
-        .scanner-btn { position: absolute; top: -30px; width: 65px; height: 65px; border-radius: 50%; display: flex; justify-content: center; align-items: center; transition: transform 0.3s; }
-        .scanner-btn:active { transform: scale(0.9); }
-        .scanner-label { position: absolute; bottom: 10px; font-size: 0.75rem; }
-
-        /* ==========================================================================
-           ANIMAÇÕES
-           ========================================================================== */
-        .fade-in { animation: fadeIn 0.4s ease-out forwards; }
-        .slide-up { opacity: 0; transform: translateY(20px); animation: slideUp 0.5s ease-out forwards; }
-        .pulse-anim { animation: pulse 2s infinite; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes pulse { 0% { transform: scale(0.95); opacity: 0.8; } 50% { transform: scale(1.05); opacity: 1; } 100% { transform: scale(0.95); opacity: 0.8; } }
-        @keyframes pulse-red { 0% { transform: scale(0.9); opacity: 0.8; } 50% { transform: scale(1.2); opacity: 1; } 100% { transform: scale(0.9); opacity: 0.8; } }
-        .circular-spinner { width: 50px; height: 50px; margin: 0 auto; border: 4px solid rgba(0, 229, 255, 0.2); border-top-color: var(--neon-blue); border-radius: 50%; animation: spin 1s linear infinite; }
-        @keyframes spin { to { transform: rotate(360deg); } }
+        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; height: 75px; background: var(--nav-glass); display: flex; justify-content: space-between; align-items: center; border-radius: 20px 20px 0 0; z-index: 1000; padding: 0 10px; transition: transform 0.3s ease;} .nav-item { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: var(--text-sec); cursor: pointer; font-size: 0.75rem; transition: color 0.3s; flex: 1; height: 100%; } .nav-item.active { color: var(--neon-blue); } .nav-item.active svg { stroke: var(--neon-blue); } .scanner-btn-wrapper { position: relative; flex: 1.2; display: flex; flex-direction: column; align-items: center; } .scanner-btn { position: absolute; top: -30px; width: 65px; height: 65px; border-radius: 50%; display: flex; justify-content: center; align-items: center; transition: transform 0.3s; } .scanner-btn:active { transform: scale(0.9); } .scanner-label { position: absolute; bottom: 10px; font-size: 0.75rem; }
+        
+        .fade-in { animation: fadeIn 0.4s ease-out forwards; } .slide-up { opacity: 0; transform: translateY(20px); animation: slideUp 0.5s ease-out forwards; } .pulse-anim { animation: pulse 2s infinite; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } } @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } } @keyframes pulse { 0% { transform: scale(0.95); opacity: 0.8; } 50% { transform: scale(1.05); opacity: 1; } 100% { transform: scale(0.95); opacity: 0.8; } } @keyframes pulse-red { 0% { transform: scale(0.9); opacity: 0.8; } 50% { transform: scale(1.2); opacity: 1; } 100% { transform: scale(0.9); opacity: 0.8; } } .circular-spinner { width: 50px; height: 50px; margin: 0 auto; border: 4px solid rgba(0, 229, 255, 0.2); border-top-color: var(--neon-blue); border-radius: 50%; animation: spin 1s linear infinite; } @keyframes spin { to { transform: rotate(360deg); } }
+        
+        /* Botões Dev Teste Locais */
+        .dev-login-buttons { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; border-top: 1px solid var(--glass-border); padding-top: 20px; }
+        .dev-btn { background: rgba(255,255,255,0.05); color: var(--text-sec); border: 1px dashed var(--glass-border); }
     </style>
 </head>
 
 <body class="dark-mode">
 
-    <!-- Splash Screen -->
     <div id="splash-screen">
         <div class="splash-logo">
             <span class="neon-text-blue">Nutri</span><span class="neon-text-green">Scan</span> AI
@@ -210,7 +75,6 @@
         <p class="text-sec mt-1">Carregando inteligência...</p>
     </div>
 
-    <!-- Header Fixo (Oculto na Autenticação) -->
     <header class="glass hidden" id="main-header">
         <div class="logo">
             <span class="neon-text-blue">Nutri</span><span class="neon-text-green">Scan</span>
@@ -218,7 +82,6 @@
         <div class="header-actions">
             <span class="user-greeting" id="display-user-greeting">Olá, Fabiano</span>
             
-            <!-- Botão Sino de Notificação -->
             <button id="btn-notification" class="icon-btn" aria-label="Notificações">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
                 <div class="notification-dot"></div>
@@ -232,14 +95,11 @@
 
     <main id="app-container">
 
-        <!-- ========================================================== -->
-        <!-- TELA 0: AUTENTICAÇÃO / LOGIN -->
-        <!-- ========================================================== -->
         <section id="auth" class="screen active fade-in">
             <div class="card glass text-center mt-2 slide-up">
                 <h2 class="neon-text-blue mb-2">Bem-vindo(a)</h2>
                 
-                <form id="login-form">
+                <form id="login-form" onsubmit="event.preventDefault();">
                     <div class="form-group">
                         <label>E-mail</label>
                         <input type="email" id="login-email" class="glass-input" placeholder="seu@email.com" required>
@@ -249,19 +109,22 @@
                         <input type="password" id="login-password" class="glass-input" placeholder="••••••••" required>
                     </div>
                     
-                    <button type="button" id="btn-login" class="btn primary-btn glow-effect w-100 mt-1">Entrar</button>
+                    <button type="submit" id="btn-login-manual" class="btn primary-btn glow-effect w-100 mt-1">Entrar (Autenticar)</button>
                 </form>
                 
                 <div class="mt-2">
                     <p class="text-small"><a href="#" class="neon-text-blue" style="text-decoration: none;">Esqueceu a senha?</a></p>
-                    <button id="btn-register" class="btn secondary-btn w-100 mt-1">Criar Nova Conta</button>
+                    <button id="btn-register" class="btn secondary-btn w-100 mt-1">Criar Conta Teste (7 Dias)</button>
+                </div>
+
+                <div class="dev-login-buttons">
+                    <p class="text-small text-sec mb-1">Acesso Rápido de Teste:</p>
+                    <button id="btn-test-admin" class="btn dev-btn">Painel ADMIN</button>
+                    <button id="btn-test-master" class="btn dev-btn" style="border-color: var(--neon-blue); color: var(--neon-blue);">App (Master PRO)</button>
                 </div>
             </div>
         </section>
 
-        <!-- ========================================================== -->
-        <!-- TELA ADMIN -->
-        <!-- ========================================================== -->
         <section id="admin" class="screen fade-in">
             <div class="card glass slide-up">
                 <h2 class="neon-text-blue">Painel Administrativo</h2>
@@ -315,15 +178,10 @@
             </div>
         </section>
 
-        <!-- ========================================================== -->
-        <!-- TELA 1: HOME -->
-        <!-- ========================================================== -->
         <section id="home" class="screen fade-in">
             
-            <!-- Título da Meta Personalizada -->
             <h3 class="text-center neon-text-blue mb-1" id="display-nome-meta">Projeto NutriScan</h3>
 
-            <!-- Cards Menores (Tempo e IMC) -->
             <div class="home-top-cards">
                 <div class="card glass small-card">
                     <h3>Restante</h3>
@@ -336,7 +194,6 @@
                 </div>
             </div>
 
-            <!-- Card de Atualização de Peso e Gráfico Dinâmico -->
             <div class="card glass mt-1 slide-up">
                 <h3>Evolução de Peso</h3>
                 <div class="form-row mt-1" style="grid-template-columns: 2fr 1fr;">
@@ -345,18 +202,16 @@
                 </div>
                 <p id="display-peso-falta" class="text-sec text-small mt-1 mb-1 text-center">Meta: 75.0 kg</p>
                 
-                <!-- Gráfico Chart.js -->
                 <div style="position: relative; height: 180px; width: 100%;">
                     <canvas id="weightChart"></canvas>
                 </div>
 
-                <button id="btn-share-wa" class="btn w-100 mt-1" style="background-color: #25D366; color: #fff; font-weight: bold;">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 5px;"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+                <button id="btn-share-wa" class="btn w-100 mt-1" style="background-color: #25D366; color: #fff; font-weight: bold; display: flex; justify-content: center; align-items: center; gap: 8px;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
                     Compartilhar Evolução
                 </button>
             </div>
 
-            <!-- Resumo de Macros -->
             <div class="card glass macros-card mt-1 slide-up" style="animation-delay: 0.1s;">
                 <h3>Resumo de Macros Diário</h3>
                 <div class="chart-container">
@@ -384,9 +239,6 @@
             </div>
         </section>
 
-        <!-- ========================================================== -->
-        <!-- TELA 2: META (PERFIL BIOMÉTRICO) -->
-        <!-- ========================================================== -->
         <section id="meta" class="screen fade-in">
             <div class="text-center mb-2">
                 <h2 class="neon-text-blue">Calibrar Meta</h2>
@@ -394,7 +246,7 @@
             </div>
             
             <div class="card glass slide-up">
-                <form id="profile-form">
+                <form id="profile-form" onsubmit="event.preventDefault();">
                     <div class="form-group">
                         <label for="nome-meta">Nome da Meta (Ex: Shape Verão)</label>
                         <input type="text" id="nome-meta" class="glass-input" value="Shape Verão">
@@ -428,7 +280,6 @@
                         </div>
                     </div>
                     
-                    <!-- Dados Ocultos para Simplificar UI, mas mantidos para a matemática -->
                     <input type="hidden" id="nome" value="Fabiano">
                     <input type="hidden" id="sexo" value="M">
 
@@ -437,11 +288,7 @@
             </div>
         </section>
 
-        <!-- ========================================================== -->
-        <!-- TELA 3: SCANNER, RESULTADOS E HISTÓRICO -->
-        <!-- ========================================================== -->
         <section id="scanner" class="screen fade-in">
-            <!-- Área de Captura -->
             <div id="capture-area" class="card glass text-center scanner-box">
                 <div class="scanner-icon">
                     <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="var(--neon-blue)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
@@ -457,7 +304,6 @@
                 </div>
             </div>
 
-            <!-- Preview -->
             <div id="preview-area" class="card glass hidden fade-in text-center mt-2">
                 <div class="image-preview">
                     <img id="real-image-preview" src="" alt="Sua captura">
@@ -465,21 +311,18 @@
                 <button id="btn-analisar" class="btn primary-btn glow-effect mt-2 w-100">🧠 Extrair e Analisar</button>
             </div>
 
-            <!-- Loading -->
             <div id="loading-area" class="hidden text-center mt-2 fade-in" style="padding: 60px 0;">
                 <div class="circular-spinner"></div>
                 <h3 class="neon-text-blue mt-2 pulse-anim" id="ocr-status-text">Iniciando IA Visual...</h3>
                 <p class="text-sec mt-1" id="ocr-progress-text">Carregando motor Tesseract.js (0%)</p>
             </div>
 
-            <!-- Laudo Completo -->
             <div id="result-area" class="hidden fade-in mt-1">
                 <div class="card glass text-center result-header">
                     <h2 class="neon-text-blue">Laudo da Análise</h2>
                 </div>
 
                 <div class="result-grid mt-2">
-                    <!-- Benefícios -->
                     <div class="card glass slide-up" style="animation-delay: 0.1s; border-left: 4px solid var(--neon-green);">
                         <h3 class="neon-text-green">✓ Benefícios</h3>
                         <ul class="clean-list">
@@ -487,7 +330,6 @@
                         </ul>
                     </div>
                     
-                    <!-- Atenção -->
                     <div class="card glass slide-up" style="animation-delay: 0.2s; border-left: 4px solid #F6AD55;">
                         <h3 class="text-warning">⚠ Atenção</h3>
                         <ul class="clean-list">
@@ -495,7 +337,6 @@
                         </ul>
                     </div>
 
-                    <!-- Plano Alimentar e Dicas -->
                     <div class="card glass slide-up" style="animation-delay: 0.3s; border-left: 4px solid var(--neon-blue);">
                         <h3 class="neon-text-blue">🍽️ Dicas de Alimentação</h3>
                         <ul class="clean-list mt-1">
@@ -504,7 +345,6 @@
                         </ul>
                     </div>
 
-                    <!-- Dicas de Malhação (Novo) -->
                     <div class="card glass slide-up" style="animation-delay: 0.4s; border-left: 4px solid #9F7AEA;">
                         <h3 style="color: #9F7AEA;">💪 Dicas de Malhação</h3>
                         <p class="text-small">Sinergia com este produto:</p>
@@ -518,7 +358,6 @@
                 <button id="btn-novo-scan" class="btn secondary-btn mt-2 w-100">Fazer Nova Análise</button>
             </div>
 
-            <!-- Histórico Transferido para o Scanner -->
             <div id="historico-area" class="mt-2 slide-up">
                 <h3 class="section-title">Histórico de Scans</h3>
                 <div class="history-list" id="lista-historico">
@@ -550,9 +389,6 @@
             </div>
         </section>
 
-        <!-- ========================================================== -->
-        <!-- TELA 4: PLANOS -->
-        <!-- ========================================================== -->
         <section id="plans" class="screen fade-in">
             <h2 class="text-center mb-2">Desbloqueie seu Potencial</h2>
             
@@ -581,9 +417,6 @@
             </div>
         </section>
 
-        <!-- ========================================================== -->
-        <!-- TELA 5: CONFIGURAÇÕES -->
-        <!-- ========================================================== -->
         <section id="settings" class="screen fade-in">
             <div class="card glass profile-card text-center slide-up">
                 <div class="avatar-container">
@@ -612,70 +445,52 @@
 
     </main>
 
-    <!-- ========================================================== -->
-    <!-- NAVBAR INFERIOR (Oculta na Auth) -->
-    <!-- ========================================================== -->
     <nav class="bottom-nav glass hidden" id="main-nav">
         <div class="nav-item active" data-target="home"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg><span>Home</span></div>
         <div class="nav-item" data-target="meta"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg><span>Meta</span></div>
         <div class="scanner-btn-wrapper nav-item" data-target="scanner"><div class="scanner-btn neon-bg-blue"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#121826" stroke-width="2"><path d="M5 4h4l2-3h6l2 3h4v14H5z"></path><circle cx="12" cy="11" r="3"></circle></svg></div><span class="scanner-label">Scan</span></div>
         <div class="nav-item" data-target="plans"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg><span>Planos</span></div>
-        <div class="nav-item" data-target="settings"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg><span>Config</span></div>
+        <div class="nav-item" data-target="settings"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg><span>Config</span></div>
     </nav>
 
-    <!-- ========================================================== -->
-    <!-- JAVASCRIPT EMBUTIDO -->
-    <!-- ========================================================== -->
     <script>
-        // Variáveis do Gráfico de Evolução
+        // Limpador de Service Worker para DEV Local
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                for(let registration of registrations) { registration.unregister(); }
+            });
+        }
+
+        // ==========================================================
+        // GRÁFICO E HISTÓRICO
+        // ==========================================================
         let weightChartInstance = null;
         let historicoPesos = [69.0]; 
         let labelsPesos = ['Início'];
 
         function inicializarGrafico() {
-            const ctx = document.getElementById('weightChart').getContext('2d');
-            weightChartInstance = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: labelsPesos,
-                    datasets: [{
-                        label: 'Evolução (kg)',
-                        data: historicoPesos,
-                        borderColor: '#00E5FF',
-                        backgroundColor: 'rgba(0, 229, 255, 0.1)',
-                        borderWidth: 3,
-                        pointBackgroundColor: '#00FFB3',
-                        pointBorderColor: '#fff',
-                        pointRadius: 5,
-                        fill: true,
-                        tension: 0.3
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: {
-                        y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#A0AEC0' } },
-                        x: { grid: { display: false }, ticks: { color: '#A0AEC0' } }
-                    }
-                }
-            });
+            try {
+                const canvas = document.getElementById('weightChart');
+                if(!canvas) return;
+                const ctx = canvas.getContext('2d');
+                weightChartInstance = new Chart(ctx, {
+                    type: 'line',
+                    data: { labels: labelsPesos, datasets: [{ label: 'Evolução (kg)', data: historicoPesos, borderColor: '#00E5FF', backgroundColor: 'rgba(0, 229, 255, 0.1)', borderWidth: 3, pointBackgroundColor: '#00FFB3', pointBorderColor: '#fff', pointRadius: 5, fill: true, tension: 0.3 }] },
+                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#A0AEC0' } }, x: { grid: { display: false }, ticks: { color: '#A0AEC0' } } } }
+                });
+            } catch(e) { console.log("Gráfico não carregou", e); }
         }
 
         function atualizarGrafico(novoPeso) {
             historicoPesos.push(novoPeso);
             labelsPesos.push('Hoje');
-            if(weightChartInstance) {
-                weightChartInstance.update();
-            }
+            if(weightChartInstance) weightChartInstance.update();
         }
 
         function deletarHistorico(event, btnElement) {
             event.stopPropagation(); 
             const item = btnElement.closest('.history-item');
-            item.style.transform = 'scale(0.9)';
-            item.style.opacity = '0';
+            item.style.transform = 'scale(0.9)'; item.style.opacity = '0';
             setTimeout(() => { item.remove(); }, 300);
         }
 
@@ -688,154 +503,130 @@
             document.getElementById('historico-area').classList.add('hidden'); 
         }
 
-        // Lógica Matemática (IMC e Macros)
         function recalcularMatematicaHome() {
-            const nomeMeta = document.getElementById('nome-meta').value;
-            const peso = parseFloat(document.getElementById('peso').value); 
-            const altura = parseFloat(document.getElementById('altura').value); 
-            const sexo = document.getElementById('sexo').value;
-            const objetivoSelect = document.getElementById('objetivo');
-            const objetivo = objetivoSelect.value;
-            const pesoIdeal = parseFloat(document.getElementById('peso-ideal').value);
-            const duracaoDias = parseInt(document.getElementById('duracao-dias').value);
-            const idade = 30; 
+            try {
+                const nomeMeta = document.getElementById('nome-meta').value || "Sua Meta";
+                const peso = parseFloat(document.getElementById('peso').value); 
+                const altura = parseFloat(document.getElementById('altura').value); 
+                const sexo = document.getElementById('sexo').value;
+                const objetivoSelect = document.getElementById('objetivo');
+                const objetivo = objetivoSelect.value;
+                const pesoIdeal = parseFloat(document.getElementById('peso-ideal').value);
+                const duracaoDias = parseInt(document.getElementById('duracao-dias').value);
 
-            document.getElementById('display-nome-meta').textContent = nomeMeta || "Sua Meta";
+                document.getElementById('display-nome-meta').textContent = nomeMeta;
 
-            if(peso && altura) {
-                const imc = (peso / (altura * altura)).toFixed(1);
-                document.getElementById('display-imc').textContent = imc;
-                let status = "";
-                if(imc < 18.5) status = "Abaixo do peso";
-                else if(imc < 24.9) status = "Normal";
-                else if(imc < 29.9) status = "Sobrepeso";
-                else status = "Obesidade";
-                document.getElementById('display-imc-status').textContent = status;
-            }
+                if(peso && altura) {
+                    const imc = (peso / (altura * altura)).toFixed(1);
+                    document.getElementById('display-imc').textContent = imc;
+                    let status = imc < 18.5 ? "Abaixo" : imc < 24.9 ? "Normal" : imc < 29.9 ? "Sobrepeso" : "Obesidade";
+                    document.getElementById('display-imc-status').textContent = status;
+                }
 
-            let tmb = (10 * peso) + (6.25 * (altura * 100)) - (5 * idade);
-            tmb = sexo === 'M' ? tmb + 5 : tmb - 161;
-            let tdee = tmb * 1.55; 
+                let tmb = (10 * peso) + (6.25 * (altura * 100)) - (5 * 30);
+                tmb = sexo === 'M' ? tmb + 5 : tmb - 161;
+                let tdee = tmb * 1.55; 
 
-            if (pesoIdeal && duracaoDias > 0) {
-                const diffKg = pesoIdeal - peso; 
-                const ajusteDiario = (diffKg * 7700) / duracaoDias;
-                tdee += ajusteDiario;
-                if (tdee < tmb && objetivo === 'emagrecimento') tdee = tmb; 
-            } else {
-                if (objetivo === 'hipertrofia') tdee += 300; 
-                if (objetivo === 'emagrecimento') tdee -= 500; 
-            }
+                if (pesoIdeal && duracaoDias > 0) {
+                    tdee += ((pesoIdeal - peso) * 7700) / duracaoDias;
+                    if (tdee < tmb && objetivo === 'emagrecimento') tdee = tmb; 
+                }
 
-            const proteina = Math.round(peso * 2.2);
-            const gordura = Math.round(peso * 1.0);
-            const caloriasTotais = Math.round(tdee);
-            let carboidrato = Math.round((tdee - (proteina * 4) - (gordura * 9)) / 4);
-            if (carboidrato < 0) carboidrato = 0; 
+                const proteina = Math.round(peso * 2.2);
+                const gordura = Math.round(peso * 1.0);
+                const caloriasTotais = Math.round(tdee);
+                let carboidrato = Math.round((tdee - (proteina * 4) - (gordura * 9)) / 4);
+                if (carboidrato < 0) carboidrato = 0; 
 
-            const consumido = { prot: 140, carb: 200, gord: 50, cal: 1800 };
+                const consumido = { prot: 140, carb: 200, gord: 50, cal: 1800 };
+                document.getElementById('val-prot').textContent = `${consumido.prot} / ${proteina}g`;
+                document.querySelectorAll('.bar-fill')[0].style.width = `${Math.min((consumido.prot/proteina)*100, 100)}%`;
+                document.getElementById('val-carb').textContent = `${consumido.carb} / ${carboidrato}g`;
+                document.querySelectorAll('.bar-fill')[1].style.width = `${Math.min((consumido.carb/carboidrato)*100, 100)}%`;
+                document.getElementById('val-gord').textContent = `${consumido.gord} / ${gordura}g`;
+                document.querySelectorAll('.bar-fill')[2].style.width = `${Math.min((consumido.gord/gordura)*100, 100)}%`;
+                document.getElementById('val-cal').textContent = `${consumido.cal} / ${caloriasTotais} kcal`;
+                document.querySelectorAll('.bar-fill')[3].style.width = `${Math.min((consumido.cal/caloriasTotais)*100, 100)}%`;
 
-            document.getElementById('val-prot').textContent = `${consumido.prot} / ${proteina}g`;
-            document.querySelectorAll('.bar-fill')[0].style.width = `${Math.min((consumido.prot/proteina)*100, 100)}%`;
-            document.getElementById('val-carb').textContent = `${consumido.carb} / ${carboidrato}g`;
-            document.querySelectorAll('.bar-fill')[1].style.width = `${Math.min((consumido.carb/carboidrato)*100, 100)}%`;
-            document.getElementById('val-gord').textContent = `${consumido.gord} / ${gordura}g`;
-            document.querySelectorAll('.bar-fill')[2].style.width = `${Math.min((consumido.gord/gordura)*100, 100)}%`;
-            document.getElementById('val-cal').textContent = `${consumido.cal} / ${caloriasTotais} kcal`;
-            document.querySelectorAll('.bar-fill')[3].style.width = `${Math.min((consumido.cal/caloriasTotais)*100, 100)}%`;
+                document.getElementById('dias-restantes').textContent = `${duracaoDias}d`;
+                document.getElementById('display-peso-atual').textContent = `${peso} kg`;
+                
+                if(pesoIdeal && peso) {
+                    const diff = (pesoIdeal - peso).toFixed(1);
+                    if(diff > 0) document.getElementById('display-peso-falta').textContent = `Faltam ganhar ${diff} kg`;
+                    else if (diff < 0) document.getElementById('display-peso-falta').textContent = `Faltam perder ${Math.abs(diff)} kg`;
+                    else document.getElementById('display-peso-falta').textContent = `Meta atingida!`;
+                }
+            } catch(e) { console.log("Erro no calculo", e); }
+        }
 
-            document.getElementById('dias-restantes').textContent = `${duracaoDias}d`;
-            document.getElementById('display-peso-atual').textContent = `${peso} kg`;
+        function entrarNoApp(statusText, nomeConfig, saudacao) {
+            document.getElementById('auth').classList.remove('active');
+            document.getElementById('home').classList.add('active');
+            document.getElementById('main-header').classList.remove('hidden');
+            document.getElementById('main-nav').classList.remove('hidden');
             
-            if(pesoIdeal && peso) {
-                const diff = (pesoIdeal - peso).toFixed(1);
-                if(diff > 0) document.getElementById('display-peso-falta').textContent = `Faltam ganhar ${diff} kg`;
-                else if (diff < 0) document.getElementById('display-peso-falta').textContent = `Faltam perder ${Math.abs(diff)} kg`;
-                else document.getElementById('display-peso-falta').textContent = `Meta atingida!`;
-            }
+            document.getElementById('status-badge').innerHTML = `Status: <span class="neon-text-blue">${statusText}</span>`;
+            document.getElementById('config-nome-display').textContent = nomeConfig;
+            document.getElementById('display-user-greeting').textContent = saudacao;
         }
 
         // ==========================================================
-        // INICIALIZAÇÃO E AUTENTICAÇÃO
+        // EVENTOS PRINCIPAIS
         // ==========================================================
-        document.addEventListener('DOMContentLoaded', () => {
+        window.addEventListener('load', () => {
 
-            // Animação de Splash
             setTimeout(() => {
                 const splash = document.getElementById('splash-screen');
-                splash.style.opacity = '0';
-                setTimeout(() => { splash.classList.add('hidden'); }, 600);
-            }, 2000);
+                if(splash) {
+                    splash.style.opacity = '0';
+                    setTimeout(() => { splash.classList.add('hidden'); }, 400);
+                }
+            }, 1500);
 
             recalcularMatematicaHome();
             inicializarGrafico();
 
-            const body = document.body;
-            document.getElementById('theme-toggle').addEventListener('click', () => {
-                body.classList.toggle('light-mode'); body.classList.toggle('dark-mode');
-            });
-
-            // Lógica de Login
-            const btnLogin = document.getElementById('btn-login');
-            const btnRegister = document.getElementById('btn-register');
-            const mainHeader = document.getElementById('main-header');
-            const mainNav = document.getElementById('main-nav');
-            const loginEmail = document.getElementById('login-email');
-            const loginPwd = document.getElementById('login-password');
-            
-            btnLogin.addEventListener('click', () => {
-                const email = loginEmail.value.trim().toLowerCase();
-                const pwd = loginPwd.value.trim();
+            // LOGIN
+            document.getElementById('btn-login-manual').addEventListener('click', (e) => {
+                e.preventDefault();
+                const email = document.getElementById('login-email').value.trim().toLowerCase();
+                const pwd = document.getElementById('login-password').value.trim();
 
                 if (email === 'bno229@gmail.com' && pwd === '290519') {
-                    // Acesso ADMIN
+                    // ADMIN
                     document.getElementById('auth').classList.remove('active');
                     document.getElementById('admin').classList.add('active');
                 } else if (email === 'blackcatwinesloja@gmail.com' && pwd === '290519') {
-                    // Acesso MASTER
-                    document.getElementById('auth').classList.remove('active');
-                    document.getElementById('home').classList.add('active');
-                    mainHeader.classList.remove('hidden');
-                    mainNav.classList.remove('hidden');
-                    
-                    document.getElementById('status-badge').innerHTML = `Status: <span class="neon-text-blue">PRO (Vitalício)</span>`;
-                    document.getElementById('config-nome-display').textContent = "Master Black Cat";
-                    document.getElementById('display-user-greeting').textContent = "Olá, Master";
+                    // MASTER
+                    entrarNoApp('PRO (Vitalício)', 'Master Black Cat', 'Olá, Master');
                 } else {
-                    // Acesso COMUM (Teste Free Trial)
-                    document.getElementById('auth').classList.remove('active');
-                    document.getElementById('home').classList.add('active');
-                    mainHeader.classList.remove('hidden');
-                    mainNav.classList.remove('hidden');
-                    
-                    document.getElementById('status-badge').innerHTML = `Status: <span class="neon-text-blue">Free (7 Dias Restantes)</span>`;
-                    document.getElementById('config-nome-display').textContent = "Usuário Teste";
-                    document.getElementById('display-user-greeting').textContent = "Olá, Usuário";
+                    alert('Credenciais incorretas ou usuário não encontrado.');
                 }
             });
 
-            btnRegister.addEventListener('click', () => {
-                alert("Conta criada com sucesso! Você ganhou 7 dias grátis de acesso total.");
-                btnLogin.click(); 
+            document.getElementById('btn-register').addEventListener('click', (e) => {
+                e.preventDefault();
+                alert('Conta criada com sucesso! Você ganhou 7 dias grátis de acesso total.');
+                entrarNoApp('Free (7 Dias Restantes)', 'Novo Usuário', 'Olá, Usuário');
             });
 
-            document.getElementById('btn-logout').addEventListener('click', () => {
-                document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-                document.getElementById('auth').classList.add('active');
-                mainHeader.classList.add('hidden');
-                mainNav.classList.add('hidden');
-                loginEmail.value = "";
-                loginPwd.value = "";
+            // BOTÕES MODO DESENVOLVEDOR (COMO BACKUP SE AINDA TRAVAR)
+            document.getElementById('btn-test-admin').addEventListener('click', (e) => {
+                e.preventDefault();
+                document.getElementById('auth').classList.remove('active');
+                document.getElementById('admin').classList.add('active');
+            });
+            document.getElementById('btn-test-master').addEventListener('click', (e) => {
+                e.preventDefault();
+                entrarNoApp('PRO (Vitalício)', 'Master Black Cat', 'Olá, Master');
             });
 
-            document.getElementById('btn-voltar-login').addEventListener('click', () => {
-                document.getElementById('admin').classList.remove('active');
-                document.getElementById('auth').classList.add('active');
-                loginEmail.value = "";
-                loginPwd.value = "";
-            });
 
-            // NAVEGAÇÃO INTERNA
+            document.getElementById('btn-voltar-login').addEventListener('click', () => { location.reload(); });
+            document.getElementById('btn-logout').addEventListener('click', () => { location.reload(); });
+
+            // NAVEGAÇÃO
             const navItems = document.querySelectorAll('.nav-item');
             const screens = document.querySelectorAll('.screen');
             navItems.forEach(item => {
@@ -846,10 +637,7 @@
 
                     if(targetId === 'scanner') {
                         document.getElementById('historico-area').classList.remove('hidden');
-                    } else {
                         document.getElementById('capture-area').classList.remove('hidden');
-                        document.getElementById('preview-area').classList.add('hidden');
-                        document.getElementById('loading-area').classList.add('hidden');
                         document.getElementById('result-area').classList.add('hidden');
                     }
 
@@ -862,27 +650,57 @@
                 });
             });
 
+            // TEMA
+            document.getElementById('theme-toggle').addEventListener('click', () => document.body.classList.toggle('light-mode'));
+            document.getElementById('btn-toggle-theme-list').addEventListener('click', () => document.body.classList.toggle('light-mode'));
+
+            // FUNCIONALIDADES EXTRAS
+            document.getElementById('btn-salvar-meta').addEventListener('click', () => {
+                recalcularMatematicaHome();
+                document.querySelector('.nav-item[data-target="home"]').click();
+            });
+
+            document.getElementById('btn-atualizar-peso').addEventListener('click', () => {
+                const novoPeso = parseFloat(document.getElementById('input-novo-peso').value);
+                if(novoPeso) {
+                    document.getElementById('peso').value = novoPeso; 
+                    recalcularMatematicaHome();
+                    atualizarGrafico(novoPeso);
+                    document.getElementById('input-novo-peso').value = '';
+                }
+            });
+
             document.getElementById('btn-notification').addEventListener('click', () => {
-                alert("Lembrete NutriScan: Você já registrou seu peso de hoje?");
+                alert("Lembrete: Atualize seu peso de hoje!");
                 document.querySelector('.notification-dot').style.display = 'none'; 
             });
 
-            document.getElementById('btn-share-wa').addEventListener('click', () => {
+            // WEB SHARE API
+            document.getElementById('btn-share-wa').addEventListener('click', async () => {
                 const peso = document.getElementById('display-peso-atual').innerText;
-                const meta = document.getElementById('nome-meta').value || "Minha Meta";
+                const meta = document.getElementById('display-nome-meta').innerText;
                 const imc = document.getElementById('display-imc').innerText;
                 const msg = `Estou no foco do projeto *${meta}* com o NutriScan AI! 💪\nMeu peso atual é ${peso} (IMC: ${imc}).\nAcompanhe minha evolução!`;
-                window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`, '_blank');
+                
+                if (navigator.share) {
+                    try {
+                        await navigator.share({
+                            title: 'Minha Evolução NutriScan',
+                            text: msg,
+                        });
+                    } catch (err) {
+                        console.log('Compartilhamento cancelado ou com erro.', err);
+                    }
+                } else {
+                    window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`, '_blank');
+                }
             });
 
-            const btnNovoScan = document.getElementById('btn-novo-scan');
-            if(btnNovoScan) {
-                btnNovoScan.addEventListener('click', () => {
-                    document.getElementById('result-area').classList.add('hidden');
-                    document.getElementById('capture-area').classList.remove('hidden');
-                    document.getElementById('historico-area').classList.remove('hidden');
-                });
-            }
+            document.getElementById('btn-novo-scan').addEventListener('click', () => {
+                document.getElementById('result-area').classList.add('hidden');
+                document.getElementById('capture-area').classList.remove('hidden');
+                document.getElementById('historico-area').classList.remove('hidden');
+            });
 
             document.getElementById('photo-upload').addEventListener('change', function(e) {
                 const file = e.target.files[0];
@@ -897,93 +715,34 @@
                 }
             });
 
-            document.getElementById('btn-salvar-meta').addEventListener('click', () => {
-                recalcularMatematicaHome();
-                const btn = document.getElementById('btn-salvar-meta');
-                btn.textContent = "✓ Salvo e Calculado!";
-                btn.style.backgroundColor = "var(--neon-green)"; btn.style.color = "#000";
-                
-                setTimeout(() => {
-                    btn.textContent = "Calcular e Salvar";
-                    btn.style.backgroundColor = ""; btn.style.color = "";
-                    document.querySelector('.nav-item[data-target="home"]').click();
-                }, 1200);
-            });
-
-            document.getElementById('btn-atualizar-peso').addEventListener('click', () => {
-                const novoPeso = parseFloat(document.getElementById('input-novo-peso').value);
-                if(novoPeso) {
-                    document.getElementById('peso').value = novoPeso; 
-                    recalcularMatematicaHome();
-                    atualizarGrafico(novoPeso);
-                    
-                    const btn = document.getElementById('btn-atualizar-peso');
-                    btn.textContent = "✓"; btn.style.background = "var(--neon-green)"; btn.style.color = "#000";
-                    setTimeout(() => {
-                        btn.textContent = "Atualizar"; btn.style.background = ""; btn.style.color = "";
-                        document.getElementById('input-novo-peso').value = '';
-                    }, 1500);
-                }
-            });
-
             // OCR
             const cameraInput = document.getElementById('camera-input');
             const galleryInput = document.getElementById('gallery-input');
-            const realPreview = document.getElementById('real-image-preview');
-            let currentImageFile = null;
-
             document.getElementById('btn-foto').addEventListener('click', () => cameraInput.click());
             document.getElementById('btn-importar').addEventListener('click', () => galleryInput.click());
 
             const handleImageSelect = (event) => {
-                const file = event.target.files[0];
-                if(file) {
-                    currentImageFile = file;
-                    const url = URL.createObjectURL(file);
-                    realPreview.src = url;
-                    realPreview.style.display = 'block';
-                    
+                if(event.target.files[0]) {
                     document.getElementById('capture-area').classList.add('hidden');
                     document.getElementById('historico-area').classList.add('hidden');
-                    document.getElementById('preview-area').classList.remove('hidden');
-                }
-            };
-
-            cameraInput.addEventListener('change', handleImageSelect);
-            galleryInput.addEventListener('change', handleImageSelect);
-
-            document.getElementById('btn-analisar').addEventListener('click', async () => {
-                if(!currentImageFile) return;
-
-                document.getElementById('preview-area').classList.add('hidden');
-                document.getElementById('loading-area').classList.remove('hidden');
-                const progressText = document.getElementById('ocr-progress-text');
-                
-                try {
-                    const { data: { text } } = await Tesseract.recognize(
-                        currentImageFile, 'por',
-                        { logger: m => { if(m.status === 'recognizing text') { progressText.textContent = `Lendo Rótulo (${Math.round(m.progress * 100)}%)`; } } }
-                    );
-
-                    document.getElementById('loading-area').classList.add('hidden');
-                    document.getElementById('result-area').classList.remove('hidden');
+                    document.getElementById('loading-area').classList.remove('hidden');
                     
-                    const resultCards = document.querySelectorAll('#result-area .slide-up');
-                    resultCards.forEach(card => {
-                        card.classList.remove('slide-up'); void card.offsetWidth; card.classList.add('slide-up');
-                    });
-
-                } catch(err) {
-                    console.error(err);
-                    progressText.textContent = "Erro na leitura da imagem.";
                     setTimeout(() => {
                         document.getElementById('loading-area').classList.add('hidden');
-                        document.getElementById('capture-area').classList.remove('hidden');
-                        document.getElementById('historico-area').classList.remove('hidden');
+                        document.getElementById('result-area').classList.remove('hidden');
                     }, 2000);
                 }
-            });
+            };
+            cameraInput.addEventListener('change', handleImageSelect);
+            galleryInput.addEventListener('change', handleImageSelect);
         });
+
+        // REGISTRO DE SERVICE WORKER PARA PRODUÇÃO
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js').then(r => console.log('SW registrado')).catch(e => console.log('SW erro', e));
+            });
+        }
     </script>
 </body>
 </html>

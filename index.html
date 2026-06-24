@@ -11,82 +11,121 @@
 
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
     <style>
-        :root { --bg-color: #0B0F1A; --card-bg: #121826; --neon-blue: #00E5FF; --neon-green: #00FFB3; --text-main: #FFFFFF; --text-sec: #A0AEC0; --glass-bg: rgba(18, 24, 38, 0.7); --glass-border: rgba(255, 255, 255, 0.08); --nav-glass: rgba(11, 15, 26, 0.9); }
-        body.light-mode { --bg-color: #F5F7FA; --card-bg: #FFFFFF; --neon-blue: #0088FF; --neon-green: #00B884; --text-main: #1A202C; --text-sec: #4A5568; --glass-bg: rgba(255, 255, 255, 0.85); --glass-border: rgba(0, 0, 0, 0.1); --nav-glass: rgba(245, 247, 250, 0.95); }
-        
+        /* ==========================================================================
+           VARIÁVEIS DE TEMA E CORES NEON
+           ========================================================================== */
+        :root {
+            --bg-color: #0B0F1A;
+            --card-bg: #121826;
+            --neon-blue: #00E5FF;
+            --neon-green: #00FFB3;
+            --text-main: #FFFFFF;
+            --text-sec: #A0AEC0;
+            --glass-bg: rgba(18, 24, 38, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --nav-glass: rgba(11, 15, 26, 0.9);
+        }
+
+        body.light-mode {
+            --bg-color: #F5F7FA;
+            --card-bg: #FFFFFF;
+            --neon-blue: #0088FF; 
+            --neon-green: #00B884;
+            --text-main: #1A202C;
+            --text-sec: #4A5568;
+            --glass-bg: rgba(255, 255, 255, 0.85);
+            --glass-border: rgba(0, 0, 0, 0.1);
+            --nav-glass: rgba(245, 247, 250, 0.95);
+        }
+
+        /* ==========================================================================
+           RESETS E BASE
+           ========================================================================== */
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
         body { background-color: var(--bg-color); color: var(--text-main); transition: background-color 0.4s ease, color 0.4s ease; overflow-x: hidden; padding-bottom: 90px; }
-        
+
         h2, h3, h4 { margin-bottom: 0.5rem; font-weight: 600; }
         .text-center { text-align: center; } .text-sec { color: var(--text-sec); } .text-large { font-size: 2rem; font-weight: bold; } .text-huge { font-size: 3rem; font-weight: bold; } .text-small { font-size: 0.85rem; } .text-danger { color: #FC8181; } .text-warning { color: #F6AD55; }
         .mt-1 { margin-top: 1rem; } .mt-2 { margin-top: 2rem; } .mb-1 { margin-bottom: 1rem; } .mb-2 { margin-bottom: 2rem; } .w-100 { width: 100%; } .hidden { display: none !important; }
-        
+
         .neon-text-blue { color: var(--neon-blue); text-shadow: 0 0 8px rgba(0, 229, 255, 0.5); } .neon-text-green { color: var(--neon-green); text-shadow: 0 0 8px rgba(0, 255, 179, 0.5); } .neon-bg-blue { background: var(--neon-blue); box-shadow: 0 0 15px rgba(0, 229, 255, 0.6); } .neon-bg-green { background: var(--neon-green); box-shadow: 0 0 15px rgba(0, 255, 179, 0.6); } .text-dark { color: #0B0F1A !important; font-weight: bold; } .neon-border { border: 2px solid var(--neon-blue); box-shadow: 0 0 10px rgba(0, 229, 255, 0.3); }
+
         .glass { background: var(--glass-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid var(--glass-border); border-radius: 16px; box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1); }
-        
-        .btn { padding: 12px 24px; border-radius: 12px; border: none; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease; display: inline-block; }
+
+        .btn { padding: 12px 24px; border-radius: 12px; border: none; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease; display: inline-block; text-align: center; }
         .primary-btn { background: linear-gradient(135deg, var(--neon-blue), #0077ff); color: #FFFFFF; } .secondary-btn { background: transparent; border: 1px solid var(--neon-blue); color: var(--neon-blue); } .btn:active { transform: scale(0.96); } .glow-effect:hover { box-shadow: 0 0 20px rgba(0, 229, 255, 0.8); }
         .icon-btn { background: transparent; border: none; color: var(--text-main); cursor: pointer; display: flex; align-items: center; justify-content: center; position: relative;}
         .notification-dot { position: absolute; top: 0; right: 0; width: 10px; height: 10px; background-color: #FC8181; border-radius: 50%; box-shadow: 0 0 8px #FC8181; animation: pulse-red 1.5s infinite;}
         
+        .text-link { color: var(--neon-blue); cursor: pointer; background: none; border: none; font-size: 0.9rem; text-decoration: none; transition: 0.3s; margin-top: 10px; display: inline-block; }
+        .text-link:hover { text-shadow: 0 0 8px var(--neon-blue); }
+
         .form-group { margin-bottom: 15px; text-align: left; } .form-group label { display: block; margin-bottom: 6px; font-size: 0.85rem; color: var(--text-sec); font-weight: 500; }
         .glass-input, .glass-select { width: 100%; padding: 14px; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--glass-border); border-radius: 12px; color: var(--text-main); font-size: 1rem; outline: none; transition: all 0.3s; }
         body.light-mode .glass-input, body.light-mode .glass-select { background: rgba(0, 0, 0, 0.03); } .glass-input:focus, .glass-select:focus { border-color: var(--neon-blue); box-shadow: 0 0 8px rgba(0, 229, 255, 0.2); } .glass-select option { background-color: var(--card-bg); color: var(--text-main); } .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        
+
         header { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; position: sticky; top: 0; z-index: 100; border-radius: 0 0 20px 20px; }
         .logo { font-size: 1.2rem; font-weight: bold; } .header-actions { display: flex; align-items: center; gap: 15px; }
         #app-container { padding: 20px; max-width: 600px; margin: 0 auto; }
         .screen { display: none; } .screen.active { display: block; } .card { padding: 20px; }
-        
-        .home-top-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; } .small-card { padding: 15px 10px; display: flex; flex-direction: column; justify-content: center; align-items: center; } .small-card h3 { font-size: 0.95rem; margin-bottom: 5px; } .small-card .text-large { font-size: 1.4rem; }
+
+        .home-top-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; } 
+        .small-card { padding: 15px 10px; display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 14px; height: 75px; } 
+        .small-card h3 { font-size: 0.85rem; color: var(--text-sec); margin-bottom: 2px; } .small-card .text-large { font-size: 1.3rem; }
         .chart-container { display: flex; flex-direction: column; gap: 12px; margin-top: 1rem;} .chart-row { display: flex; align-items: center; gap: 10px; font-size: 0.85rem;} .chart-label { width: 80px; color: var(--text-sec); } .bar-bg { flex: 1; height: 8px; background: rgba(160, 174, 192, 0.2); border-radius: 4px; overflow: hidden; } .bar-fill { height: 100%; border-radius: 4px; transition: width 1s ease-out; } .chart-value { width: 90px; text-align: right; font-weight: bold; font-size: 0.8rem; }
         
         .history-list { display: flex; flex-direction: column; gap: 12px; margin-top: 10px;} .history-item { display: flex; justify-content: space-between; align-items: center; padding: 15px; transition: transform 0.2s; cursor: pointer; } .history-item:hover { border-color: var(--neon-blue); } .history-item:active { transform: scale(0.98); } .history-info h4 { margin: 0; font-size: 1rem; } .history-info .date { font-size: 0.75rem; color: var(--text-sec); } .history-score { font-size: 1.2rem; font-weight: bold; } .history-actions { display: flex; align-items: center; gap: 12px; } .delete-btn { padding: 6px; border-radius: 8px; background: rgba(252, 129, 129, 0.1); transition: 0.3s; } .delete-btn:hover { background: rgba(252, 129, 129, 0.3); }
         
-        .scanner-box { padding: 40px 20px; } .scanner-icon { width: 80px; height: 80px; margin: 0 auto 20px; background: rgba(0, 229, 255, 0.1); border-radius: 50%; display: flex; justify-content: center; align-items: center; animation: pulse 2s infinite; } .btn-group { display: flex; flex-direction: column; gap: 10px; }
-        .image-preview { width: 100%; height: 250px; border-radius: 12px; border: 2px dashed var(--glass-border); display: flex; justify-content: center; align-items: center; overflow: hidden; background: var(--card-bg); } .image-preview img { width: 100%; height: 100%; object-fit: cover; display: none; }
+        /* Câmera Scanner UI Restaurada ao modelo original */
+        .scanner-box { padding: 40px 20px; border: 2px dashed var(--glass-border); border-radius: 16px; background: rgba(0,0,0,0.2); } 
+        .scanner-icon { width: 80px; height: 80px; margin: 0 auto 20px; background: rgba(0, 229, 255, 0.1); border-radius: 50%; display: flex; justify-content: center; align-items: center; animation: pulse 2s infinite; } 
+        .btn-group { display: flex; flex-direction: column; gap: 10px; }
+        .image-preview { width: 100%; height: 250px; border-radius: 12px; border: 2px solid var(--neon-blue); display: flex; justify-content: center; align-items: center; overflow: hidden; background: var(--card-bg); position: relative; } 
+        .image-preview img { width: 100%; height: 100%; object-fit: cover; display: none; }
         .result-grid { display: grid; grid-template-columns: 1fr; gap: 15px; } .clean-list { list-style: none; text-align: left; margin-top: 10px;} .clean-list li { margin-bottom: 8px; font-size: 0.9rem; display: flex; align-items: flex-start; gap: 8px;} .clean-list li::before { content: "•"; color: var(--text-sec); }
         
-        .plan-card { position: relative; border: 2px solid transparent; } .pro-plan { border-color: var(--neon-blue); } .pro-badge { position: absolute; top: -12px; right: 20px; padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; letter-spacing: 1px; } .price { font-size: 2rem; font-weight: bold; margin: 15px 0; } .plan-features { list-style: none; margin-bottom: 20px; text-align: left; } .plan-features li { padding: 8px 0; border-bottom: 1px solid var(--glass-border); font-size: 0.9rem; } .plan-features li:last-child { border-bottom: none; } .plan-features li::before { content: "✓ "; color: var(--neon-green); font-weight: bold; }
+        .plan-card { position: relative; border: 2px solid transparent; margin-bottom: 15px; } 
+        .plan-card.compact-free { padding: 15px; border-radius: 14px; }
+        .pro-plan { border-color: var(--neon-blue); } .pro-badge { position: absolute; top: -12px; right: 20px; padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; letter-spacing: 1px; } .price { font-size: 2rem; font-weight: bold; margin: 15px 0; } .plan-features { list-style: none; margin-bottom: 20px; text-align: left; } .plan-features li { padding: 8px 0; border-bottom: 1px solid var(--glass-border); font-size: 0.9rem; } .plan-features li:last-child { border-bottom: none; } .plan-features li::before { content: "✓ "; color: var(--neon-green); font-weight: bold; }
+        
         .profile-card { padding: 30px 20px; position: relative; } .avatar-container { position: relative; width: 80px; height: 80px; margin: 0 auto 15px; } .avatar { width: 100%; height: 100%; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 1.5rem; font-weight: bold; background: var(--card-bg); overflow: hidden; position: relative; } .avatar img { width: 100%; height: 100%; object-fit: cover; display: none; } .edit-photo-btn { position: absolute; bottom: -5px; right: -5px; background: var(--neon-blue); border-radius: 50%; width: 28px; height: 28px; display: flex; justify-content: center; align-items: center; cursor: pointer; box-shadow: 0 0 10px rgba(0, 229, 255, 0.5); } .badge { display: inline-block; padding: 5px 15px; border-radius: 20px; background: rgba(0, 229, 255, 0.1); font-size: 0.85rem; } .settings-list { list-style: none; } .settings-item { display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid var(--glass-border); cursor: pointer; } .settings-item:last-child { border-bottom: none; }
         .admin-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.85rem; } .admin-table th, .admin-table td { padding: 10px; border-bottom: 1px solid var(--glass-border); text-align: left; } .admin-table th { color: var(--neon-blue); }
         
+        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; height: 75px; background: var(--nav-glass); display: flex; justify-content: space-between; align-items: center; border-radius: 20px 20px 0 0; z-index: 1000; padding: 0 10px; transition: transform 0.3s ease;} 
+        .nav-item { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: var(--text-sec); cursor: pointer; font-size: 0.75rem; transition: color 0.3s; flex: 1; height: 100%; overflow: hidden; } 
+        .nav-item.active { color: var(--neon-blue); } .nav-item.active svg { stroke: var(--neon-blue); } 
+        .scanner-btn-wrapper { position: relative; flex: 1.2; display: flex; flex-direction: column; align-items: center; } 
+        .scanner-btn { position: absolute; top: -30px; width: 65px; height: 65px; border-radius: 50%; display: flex; justify-content: center; align-items: center; transition: transform 0.3s; } 
+        .scanner-btn:active { transform: scale(0.9); } .scanner-label { position: absolute; bottom: 10px; font-size: 0.75rem; }
+        
+        .feedback-banner { margin-top: 12px; padding: 10px; border-radius: 10px; font-size: 0.85rem; font-weight: 500; display: none; text-align: center; border: 1px solid transparent; }
+        .feedback-success { background: rgba(0, 255, 179, 0.1); border-color: rgba(0, 255, 179, 0.2); color: var(--neon-green); }
+        .feedback-incentive { background: rgba(0, 229, 255, 0.1); border-color: rgba(0, 229, 255, 0.2); color: var(--neon-blue); }
+
         #splash-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-color); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.4s ease; } .splash-logo { font-size: 2.5rem; font-weight: bold; animation: pulse 2s infinite; }
-        
-        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; height: 75px; background: var(--nav-glass); display: flex; justify-content: space-between; align-items: center; border-radius: 20px 20px 0 0; z-index: 1000; padding: 0 10px; transition: transform 0.3s ease;} .nav-item { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: var(--text-sec); cursor: pointer; font-size: 0.75rem; transition: color 0.3s; flex: 1; height: 100%; } .nav-item.active { color: var(--neon-blue); } .nav-item.active svg { stroke: var(--neon-blue); } .scanner-btn-wrapper { position: relative; flex: 1.2; display: flex; flex-direction: column; align-items: center; } .scanner-btn { position: absolute; top: -30px; width: 65px; height: 65px; border-radius: 50%; display: flex; justify-content: center; align-items: center; transition: transform 0.3s; } .scanner-btn:active { transform: scale(0.9); } .scanner-label { position: absolute; bottom: 10px; font-size: 0.75rem; }
-        
         .fade-in { animation: fadeIn 0.4s ease-out forwards; } .slide-up { opacity: 0; transform: translateY(20px); animation: slideUp 0.5s ease-out forwards; } .pulse-anim { animation: pulse 2s infinite; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } } @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } } @keyframes pulse { 0% { transform: scale(0.95); opacity: 0.8; } 50% { transform: scale(1.05); opacity: 1; } 100% { transform: scale(0.95); opacity: 0.8; } } @keyframes pulse-red { 0% { transform: scale(0.9); opacity: 0.8; } 50% { transform: scale(1.2); opacity: 1; } 100% { transform: scale(0.9); opacity: 0.8; } } .circular-spinner { width: 50px; height: 50px; margin: 0 auto; border: 4px solid rgba(0, 229, 255, 0.2); border-top-color: var(--neon-blue); border-radius: 50%; animation: spin 1s linear infinite; } @keyframes spin { to { transform: rotate(360deg); } }
-        
-        /* Botões Dev Teste Locais */
-        .dev-login-buttons { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; border-top: 1px solid var(--glass-border); padding-top: 20px; }
-        .dev-btn { background: rgba(255,255,255,0.05); color: var(--text-sec); border: 1px dashed var(--glass-border); }
     </style>
 </head>
 
 <body class="dark-mode">
 
     <div id="splash-screen">
-        <div class="splash-logo">
-            <span class="neon-text-blue">Nutri</span><span class="neon-text-green">Scan</span> AI
-        </div>
+        <div class="splash-logo"><span class="neon-text-blue">Nutri</span><span class="neon-text-green">Scan</span> AI</div>
         <p class="text-sec mt-1">Carregando inteligência...</p>
     </div>
 
     <header class="glass hidden" id="main-header">
-        <div class="logo">
-            <span class="neon-text-blue">Nutri</span><span class="neon-text-green">Scan</span>
-        </div>
+        <div class="logo"><span class="neon-text-blue">Nutri</span><span class="neon-text-green">Scan</span></div>
         <div class="header-actions">
-            <span class="user-greeting" id="display-user-greeting">Olá, Fabiano</span>
-            
+            <span class="user-greeting" id="display-user-greeting">Olá, Usuário</span>
             <button id="btn-notification" class="icon-btn" aria-label="Notificações">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
                 <div class="notification-dot"></div>
             </button>
-
             <button id="theme-toggle" class="icon-btn" aria-label="Alternar Tema">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
             </button>
@@ -109,18 +148,13 @@
                         <input type="password" id="login-password" class="glass-input" placeholder="••••••••" required>
                     </div>
                     
-                    <button type="submit" id="btn-login-manual" class="btn primary-btn glow-effect w-100 mt-1">Entrar (Autenticar)</button>
+                    <button type="submit" id="btn-login-manual" class="btn primary-btn glow-effect w-100 mt-1">Entrar</button>
+                    <button type="button" id="btn-register" class="btn secondary-btn w-100 mt-1">Criar Nova Conta</button>
                 </form>
                 
-                <div class="mt-2">
-                    <p class="text-small"><a href="#" class="neon-text-blue" style="text-decoration: none;">Esqueceu a senha?</a></p>
-                    <button id="btn-register" class="btn secondary-btn w-100 mt-1">Criar Conta Teste (7 Dias)</button>
-                </div>
-
-                <div class="dev-login-buttons">
-                    <p class="text-small text-sec mb-1">Acesso Rápido de Teste:</p>
-                    <button id="btn-test-admin" class="btn dev-btn">Painel ADMIN</button>
-                    <button id="btn-test-master" class="btn dev-btn" style="border-color: var(--neon-blue); color: var(--neon-blue);">App (Master PRO)</button>
+                <div class="mt-2" style="display: flex; flex-direction: column; gap: 5px;">
+                    <button id="link-forgot-pwd" class="text-link">Esqueceu a senha?</button>
+                    <button id="link-admin-panel" class="text-link">Acesso Admin</button>
                 </div>
             </div>
         </section>
@@ -132,65 +166,37 @@
 
                 <div class="home-top-cards mb-1">
                     <div class="card glass small-card" style="background: rgba(0, 229, 255, 0.1);">
-                        <h3>Total Contas</h3>
-                        <p class="neon-text-blue text-large">1.248</p>
+                        <h3>Total Contas</h3><p class="neon-text-blue text-large">1.248</p>
                     </div>
                     <div class="card glass small-card" style="background: rgba(0, 255, 179, 0.1);">
-                        <h3>Ativos (PRO)</h3>
-                        <p class="neon-text-green text-large">432</p>
+                        <h3>Ativos (PRO)</h3><p class="neon-text-green text-large">432</p>
                     </div>
                 </div>
 
                 <div style="overflow-x: auto;">
                     <table class="admin-table">
-                        <thead>
-                            <tr>
-                                <th>Nome</th>
-                                <th>E-mail</th>
-                                <th>Status</th>
-                                <th>Restante</th>
-                            </tr>
-                        </thead>
+                        <thead><tr><th>Nome</th><th>E-mail</th><th>Status</th><th>Restante</th></tr></thead>
                         <tbody>
-                            <tr>
-                                <td>Fabiano F.</td>
-                                <td>fabiano@em...</td>
-                                <td class="text-warning">Free Trial</td>
-                                <td>7 dias</td>
-                            </tr>
-                            <tr>
-                                <td>Lucas M.</td>
-                                <td>lucas@em...</td>
-                                <td class="neon-text-green">PRO</td>
-                                <td>Ativo</td>
-                            </tr>
-                            <tr>
-                                <td>Juliana C.</td>
-                                <td>ju@em...</td>
-                                <td class="text-danger">Expirado</td>
-                                <td>0 dias</td>
-                            </tr>
+                            <tr><td>Fabiano F.</td><td>bno229@gma...</td><td class="text-warning">Admin Master</td><td>Vitalício</td></tr>
+                            <tr><td>Black Cat</td><td>blackcatwin...</td><td class="neon-text-green">PRO</td><td>Vitalício</td></tr>
+                            <tr><td>Demo User</td><td>demo@nutri...</td><td class="text-warning">Free Trial</td><td>7 dias</td></tr>
                         </tbody>
                     </table>
                 </div>
-
-                <button id="btn-voltar-login" class="btn secondary-btn w-100 mt-2">Sair do Painel Admin</button>
+                <button id="btn-voltar-login-admin" class="btn secondary-btn w-100 mt-2">Sair do Painel Admin</button>
             </div>
         </section>
 
         <section id="home" class="screen fade-in">
-            
             <h3 class="text-center neon-text-blue mb-1" id="display-nome-meta">Projeto NutriScan</h3>
 
             <div class="home-top-cards">
                 <div class="card glass small-card">
-                    <h3>Restante</h3>
-                    <p class="neon-text-blue text-large" id="dias-restantes">90d</p>
+                    <h3>Restante</h3><p class="neon-text-blue text-large" id="dias-restantes">--d</p>
                 </div>
                 <div class="card glass small-card">
-                    <h3>Seu IMC</h3>
-                    <p class="neon-text-green text-large" id="display-imc">20.2</p>
-                    <span id="display-imc-status" class="text-small text-sec">Normal</span>
+                    <h3>Seu IMC</h3><p class="neon-text-green text-large" id="display-imc">--</p>
+                    <span id="display-imc-status" class="text-small text-sec">Aguardando</span>
                 </div>
             </div>
 
@@ -200,51 +206,27 @@
                     <input type="number" id="input-novo-peso" class="glass-input" placeholder="Peso hoje (kg)" step="0.1">
                     <button id="btn-atualizar-peso" class="btn secondary-btn">Atualizar</button>
                 </div>
-                <p id="display-peso-falta" class="text-sec text-small mt-1 mb-1 text-center">Meta: 75.0 kg</p>
-                
-                <div style="position: relative; height: 180px; width: 100%;">
-                    <canvas id="weightChart"></canvas>
-                </div>
-
-                <button id="btn-share-wa" class="btn w-100 mt-1" style="background-color: #25D366; color: #fff; font-weight: bold; display: flex; justify-content: center; align-items: center; gap: 8px;">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
-                    Compartilhar Evolução
-                </button>
+                <p id="display-peso-falta" class="text-sec text-small mt-1 text-center">Meta: -- kg</p>
+                <div id="feedback-peso" class="feedback-banner"></div>
+                <div style="position: relative; height: 180px; width: 100%; margin-top: 10px;"><canvas id="weightChart"></canvas></div>
             </div>
 
             <div class="card glass macros-card mt-1 slide-up" style="animation-delay: 0.1s;">
                 <h3>Resumo de Macros Diário</h3>
                 <div class="chart-container">
-                    <div class="chart-row">
-                        <span class="chart-label">Proteínas</span>
-                        <div class="bar-bg"><div class="bar-fill neon-bg-blue" style="width: 0%;"></div></div>
-                        <span class="chart-value" id="val-prot">0 / 0g</span>
-                    </div>
-                    <div class="chart-row">
-                        <span class="chart-label">Carboidratos</span>
-                        <div class="bar-bg"><div class="bar-fill neon-bg-green" style="width: 0%;"></div></div>
-                        <span class="chart-value" id="val-carb">0 / 0g</span>
-                    </div>
-                    <div class="chart-row">
-                        <span class="chart-label">Gorduras</span>
-                        <div class="bar-bg"><div class="bar-fill" style="background: #F6AD55; width: 0%;"></div></div>
-                        <span class="chart-value" id="val-gord">0 / 0g</span>
-                    </div>
-                    <div class="chart-row">
-                        <span class="chart-label">Calorias</span>
-                        <div class="bar-bg"><div class="bar-fill" style="background: #FC8181; width: 0%;"></div></div>
-                        <span class="chart-value" id="val-cal">0 / 0 kcal</span>
-                    </div>
+                    <div class="chart-row"><span class="chart-label">Proteínas</span><div class="bar-bg"><div class="bar-fill neon-bg-blue" id="bar-prot" style="width: 0%;"></div></div><span class="chart-value" id="val-prot">0 / 0g</span></div>
+                    <div class="chart-row"><span class="chart-label">Carbos</span><div class="bar-bg"><div class="bar-fill neon-bg-green" id="bar-carb" style="width: 0%;"></div></div><span class="chart-value" id="val-carb">0 / 0g</span></div>
+                    <div class="chart-row"><span class="chart-label">Gorduras</span><div class="bar-bg"><div class="bar-fill" id="bar-gord" style="background: #F6AD55; width: 0%;"></div></div><span class="chart-value" id="val-gord">0 / 0g</span></div>
+                    <div class="chart-row"><span class="chart-label">Calorias</span><div class="bar-bg"><div class="bar-fill" id="bar-cal" style="background: #FC8181; width: 0%;"></div></div><span class="chart-value" id="val-cal">0 / 0 kcal</span></div>
                 </div>
             </div>
         </section>
 
         <section id="meta" class="screen fade-in">
             <div class="text-center mb-2">
-                <h2 class="neon-text-blue">Calibrar Meta</h2>
-                <p class="text-sec">Ajuste seus dados para refinar a IA.</p>
+                <h2>Ajuste sua Meta</h2>
+                <p class="text-sec">Preencha os dados da sua Meta</p>
             </div>
-            
             <div class="card glass slide-up">
                 <form id="profile-form" onsubmit="event.preventDefault();">
                     <div class="form-group">
@@ -253,13 +235,17 @@
                     </div>
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="altura">Altura (m)</label>
-                            <input type="number" id="altura" class="glass-input" step="0.01" value="1.85" required>
+                            <label for="data-inicio">Data de Início</label>
+                            <input type="date" id="data-inicio" class="glass-input">
                         </div>
                         <div class="form-group">
-                            <label for="peso">Peso Atual (kg)</label>
-                            <input type="number" id="peso" class="glass-input" step="0.1" value="69.0" required>
+                            <label for="data-termino">Data de Término</label>
+                            <input type="date" id="data-termino" class="glass-input">
                         </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group"><label for="altura">Altura (m)</label><input type="number" id="altura" class="glass-input" step="0.01" value="1.85" required></div>
+                        <div class="form-group"><label for="peso">Peso Atual (kg)</label><input type="number" id="peso" class="glass-input" step="0.1" value="69.0" required></div>
                     </div>
                     <div class="form-group">
                         <label for="objetivo">Objetivo Principal</label>
@@ -269,45 +255,36 @@
                             <option value="manutencao">Manutenção</option>
                         </select>
                     </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="peso-ideal">Peso Alvo (kg)</label>
-                            <input type="number" id="peso-ideal" class="glass-input" step="0.1" value="75.0">
-                        </div>
-                        <div class="form-group">
-                            <label for="duracao-dias">Duração (Dias)</label>
-                            <input type="number" id="duracao-dias" class="glass-input" value="90" required>
-                        </div>
+                    <div class="form-group">
+                        <label for="peso-ideal">Peso Alvo (kg)</label>
+                        <input type="number" id="peso-ideal" class="glass-input" step="0.1" value="75.0">
                     </div>
-                    
-                    <input type="hidden" id="nome" value="Fabiano">
                     <input type="hidden" id="sexo" value="M">
-
                     <button type="button" id="btn-salvar-meta" class="btn primary-btn glow-effect w-100 mt-1">Calcular e Salvar</button>
                 </form>
             </div>
         </section>
 
         <section id="scanner" class="screen fade-in">
-            <div id="capture-area" class="card glass text-center scanner-box">
+            
+            <div id="capture-area" class="card glass text-center">
                 <div class="scanner-icon">
                     <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="var(--neon-blue)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
                 </div>
-                <h2>Scanner de Rótulos</h2>
-                <p class="text-sec">Fotografe tabelas ou ingredientes para receber dicas completas.</p>
-                <div class="btn-group mt-2">
-                    <input type="file" id="camera-input" accept="image/*" capture="environment" class="hidden">
-                    <input type="file" id="gallery-input" accept="image/*" class="hidden">
-                    
-                    <button id="btn-foto" class="btn primary-btn glow-effect">📸 Tirar Foto Real</button>
-                    <button id="btn-importar" class="btn secondary-btn">🖼️ Importar da Galeria</button>
+                <h2>Scanner Inteligente</h2>
+                <p class="text-sec mb-2">Fotografe a tabela ou lista de ingredientes do produto.</p>
+                <div class="scanner-box">
+                    <div class="btn-group">
+                        <input type="file" id="camera-input" accept="image/*" capture="environment" class="hidden">
+                        <input type="file" id="gallery-input" accept="image/*" class="hidden">
+                        <button id="btn-foto" class="btn primary-btn glow-effect">📸 Tirar Foto Real</button>
+                        <button id="btn-importar" class="btn secondary-btn">🖼️ Importar da Galeria</button>
+                    </div>
                 </div>
             </div>
 
             <div id="preview-area" class="card glass hidden fade-in text-center mt-2">
-                <div class="image-preview">
-                    <img id="real-image-preview" src="" alt="Sua captura">
-                </div>
+                <div class="image-preview"><img id="real-image-preview" src="" alt="Sua captura"></div>
                 <button id="btn-analisar" class="btn primary-btn glow-effect mt-2 w-100">🧠 Extrair e Analisar</button>
             </div>
 
@@ -318,72 +295,18 @@
             </div>
 
             <div id="result-area" class="hidden fade-in mt-1">
-                <div class="card glass text-center result-header">
-                    <h2 class="neon-text-blue">Laudo da Análise</h2>
-                </div>
-
-                <div class="result-grid mt-2">
-                    <div class="card glass slide-up" style="animation-delay: 0.1s; border-left: 4px solid var(--neon-green);">
-                        <h3 class="neon-text-green">✓ Benefícios</h3>
-                        <ul class="clean-list">
-                            <li>Alto teor proteico (24g/dose). Ideal para síntese muscular.</li>
-                        </ul>
+                <div class="card glass text-center result-header"><h2 class="neon-text-blue">Laudo da Análise IA</h2></div>
+                <div class="result-grid mt-2" id="dynamic-ai-results">
                     </div>
-                    
-                    <div class="card glass slide-up" style="animation-delay: 0.2s; border-left: 4px solid #F6AD55;">
-                        <h3 class="text-warning">⚠ Atenção</h3>
-                        <ul class="clean-list">
-                            <li>Contém lactose (Pode causar inchaço).</li>
-                        </ul>
-                    </div>
-
-                    <div class="card glass slide-up" style="animation-delay: 0.3s; border-left: 4px solid var(--neon-blue);">
-                        <h3 class="neon-text-blue">🍽️ Dicas de Alimentação</h3>
-                        <ul class="clean-list mt-1">
-                            <li><b>Plano:</b> Misture 1 scoop com 200ml de leite desnatado ou água.</li>
-                            <li><b>Horário:</b> Imediatamente após o treino.</li>
-                        </ul>
-                    </div>
-
-                    <div class="card glass slide-up" style="animation-delay: 0.4s; border-left: 4px solid #9F7AEA;">
-                        <h3 style="color: #9F7AEA;">💪 Dicas de Malhação</h3>
-                        <p class="text-small">Sinergia com este produto:</p>
-                        <ul class="clean-list mt-1">
-                            <li><b>Foco:</b> Braço / Bíceps</li>
-                            <li><b>Equipamento:</b> Rosca Direta c/ Barra W</li>
-                            <li><b>Série/Repetição:</b> 4 séries de 10 a 12 reps (Foco na falha)</li>
-                        </ul>
-                    </div>
-                </div>
                 <button id="btn-novo-scan" class="btn secondary-btn mt-2 w-100">Fazer Nova Análise</button>
             </div>
 
             <div id="historico-area" class="mt-2 slide-up">
                 <h3 class="section-title">Histórico de Scans</h3>
                 <div class="history-list" id="lista-historico">
-                    <div class="history-item card glass" onclick="abrirRelatorio()">
-                        <div class="history-info">
-                            <h4>Whey Protein Concentrado</h4>
-                            <span class="date">Hoje, 09:30</span>
-                        </div>
-                        <div class="history-actions">
-                            <div class="history-score neon-text-green">9.1</div>
-                            <button class="icon-btn delete-btn" onclick="deletarHistorico(event, this)" aria-label="Excluir">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FC8181" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="history-item card glass" onclick="abrirRelatorio()">
-                        <div class="history-info">
-                            <h4>Creatina Monohidratada</h4>
-                            <span class="date">Ontem, 18:15</span>
-                        </div>
-                        <div class="history-actions">
-                            <div class="history-score neon-text-blue">9.5</div>
-                            <button class="icon-btn delete-btn" onclick="deletarHistorico(event, this)" aria-label="Excluir">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FC8181" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-                            </button>
-                        </div>
+                    <div class="history-item card glass" onclick="window.abrirRelatorio()">
+                        <div class="history-info"><h4>Iogurte Grego Natural</h4><span class="date">Hoje, 09:30</span></div>
+                        <div class="history-actions"><div class="history-score neon-text-green">8.8</div><button class="icon-btn delete-btn" onclick="window.deletarHistorico(event, this)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FC8181" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button></div>
                     </div>
                 </div>
             </div>
@@ -392,52 +315,45 @@
         <section id="plans" class="screen fade-in">
             <h2 class="text-center mb-2">Desbloqueie seu Potencial</h2>
             
-            <div class="plan-card card glass slide-up">
-                <h3>Plano Free</h3>
-                <div class="price">7 Dias<span class="text-sec" style="font-size: 1rem;"> Grátis</span></div>
-                <ul class="plan-features">
-                    <li><b>Acesso Total</b> liberado</li>
-                    <li>Scan e leitura de tabelas</li>
-                    <li>Dicas de alimentação e treino</li>
-                </ul>
-                <button class="btn secondary-btn w-100">Plano Atual</button>
+            <div class="plan-card card glass compact-free slide-up text-center">
+                <h3 class="text-sec">Plano Free</h3>
+                <p class="neon-text-green text-large mt-1">7 dias grátis</p>
+                <p class="text-small mt-1 text-sec">Acesso Total Liberado</p>
             </div>
 
-            <div class="plan-card card glass pro-plan slide-up mt-2" style="animation-delay: 0.2s;">
-                <div class="pro-badge neon-bg-blue text-dark">PRO</div>
-                <h3 class="neon-text-blue">NutriScan Premium</h3>
-                <div class="price neon-text-blue">R$ 9,90<span class="text-sec">/mês</span></div>
+            <div class="plan-card card glass pro-plan slide-up mt-2" style="animation-delay: 0.1s;">
+                <div class="pro-badge neon-bg-blue text-dark">RECOMENDADO</div>
+                <h3 class="neon-text-blue">NutriScan Premium Pro</h3>
+                <div class="price neon-text-blue">R$ 9,90<span class="text-sec" style="font-size: 1rem;">/mês</span></div>
                 <ul class="plan-features">
-                    <li><b>Acesso Total</b> ilimitado</li>
-                    <li>Análises avançadas com IA</li>
-                    <li>Planos alimentares sob medida</li>
-                    <li>Evolução gráfica em tempo real</li>
+                    <li><b>Acesso Total</b> irrestrito sem anúncios de interrupção</li>
+                    <li>Escaneie tabelas nutricionais e pratos de forma ilimitada e entenda os benefícios e riscos</li>
+                    <li>Cálculo Preciso de Macros, TDEE e IMC Dinâmico</li>
+                    <li>Acompanhamento de Evolução de Peso com Gráficos Lineares Ativos</li>
+                    <li>Plano Alimentar Inteligente gerado sob medida para a sua Meta</li>
                 </ul>
-                <button class="btn primary-btn glow-effect w-100 mt-1">Assinar Premium</button>
+                <button class="btn primary-btn glow-effect w-100">Assinar Premium Pro</button>
             </div>
         </section>
 
         <section id="settings" class="screen fade-in">
             <div class="card glass profile-card text-center slide-up">
                 <div class="avatar-container">
-                    <div class="avatar neon-border" id="profile-avatar">
-                        <span id="avatar-initials">US</span>
-                        <img id="avatar-img" src="" alt="Foto de perfil">
-                    </div>
-                    <div class="edit-photo-btn" onclick="document.getElementById('photo-upload').click()">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#121826" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
-                    </div>
+                    <div class="avatar neon-border" id="profile-avatar"><span id="avatar-initials">US</span><img id="avatar-img" src="" alt="Foto de perfil"></div>
+                    <div class="edit-photo-btn" onclick="document.getElementById('photo-upload').click()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#121826" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg></div>
                 </div>
                 <input type="file" id="photo-upload" accept="image/*" class="hidden">
-                <h2 id="config-nome-display">Usuário NutriScan</h2>
+                
+                <div class="form-group" style="margin-top: 10px;">
+                    <input type="text" id="config-user-name" class="glass-input text-center" style="font-size: 1.2rem; border: none; font-weight: bold; background: transparent; padding: 5px; margin: 0;" placeholder="Seu Nome Aqui">
+                </div>
+
                 <div class="mt-1 badge" id="status-badge">Status: <span class="neon-text-blue">Free (7 Dias Restantes)</span></div>
             </div>
-            
             <div class="card glass mt-2 slide-up" style="animation-delay: 0.1s;">
                 <ul class="settings-list">
                     <li class="settings-item" id="btn-toggle-theme-list"><span>🌓 Alternar Tema</span><span class="text-sec">></span></li>
                     <li class="settings-item"><span>🔒 Privacidade e Segurança</span><span class="text-sec">></span></li>
-                    <li class="settings-item"><span>📄 Termos de Uso</span><span class="text-sec">></span></li>
                     <li class="settings-item text-danger" id="btn-logout"><span>🚪 Sair da Conta</span><span class="text-sec">></span></li>
                 </ul>
             </div>
@@ -450,71 +366,122 @@
         <div class="nav-item" data-target="meta"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg><span>Meta</span></div>
         <div class="scanner-btn-wrapper nav-item" data-target="scanner"><div class="scanner-btn neon-bg-blue"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#121826" stroke-width="2"><path d="M5 4h4l2-3h6l2 3h4v14H5z"></path><circle cx="12" cy="11" r="3"></circle></svg></div><span class="scanner-label">Scan</span></div>
         <div class="nav-item" data-target="plans"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg><span>Planos</span></div>
-        <div class="nav-item" data-target="settings"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg><span>Config</span></div>
+        <div class="nav-item" data-target="settings">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+            <span>Config</span>
+        </div>
     </nav>
 
-    <script>
-        // Limpador de Service Worker para DEV Local
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.getRegistrations().then(function(registrations) {
-                for(let registration of registrations) { registration.unregister(); }
-            });
-        }
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-        // ==========================================================
-        // GRÁFICO E HISTÓRICO
-        // ==========================================================
+        const firebaseConfig = {
+            apiKey: "AIzaSyCdP3YGAE3WwEZ7CKG1thxhtwOCkFQRCBg",
+            authDomain: "nutriscan-625dc.firebaseapp.com",
+            projectId: "nutriscan-625dc",
+            storageBucket: "nutriscan-625dc.firebasestorage.app",
+            messagingSenderId: "229465131709",
+            appId: "1:229465131709:web:77f690eba5f723e2a1c5d4"
+        };
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
         let weightChartInstance = null;
         let historicoPesos = [69.0]; 
         let labelsPesos = ['Início'];
+        let pesoInicialMeta = 69.0;
 
         function inicializarGrafico() {
             try {
                 const canvas = document.getElementById('weightChart');
                 if(!canvas) return;
-                const ctx = canvas.getContext('2d');
-                weightChartInstance = new Chart(ctx, {
+                weightChartInstance = new Chart(canvas.getContext('2d'), {
                     type: 'line',
                     data: { labels: labelsPesos, datasets: [{ label: 'Evolução (kg)', data: historicoPesos, borderColor: '#00E5FF', backgroundColor: 'rgba(0, 229, 255, 0.1)', borderWidth: 3, pointBackgroundColor: '#00FFB3', pointBorderColor: '#fff', pointRadius: 5, fill: true, tension: 0.3 }] },
                     options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#A0AEC0' } }, x: { grid: { display: false }, ticks: { color: '#A0AEC0' } } } }
                 });
-            } catch(e) { console.log("Gráfico não carregou", e); }
+            } catch(e) { console.log(e); }
         }
 
         function atualizarGrafico(novoPeso) {
             historicoPesos.push(novoPeso);
-            labelsPesos.push('Hoje');
+            const hoje = new Date();
+            const dataFormatada = String(hoje.getDate()).padStart(2, '0') + '/' + String(hoje.getMonth() + 1).padStart(2, '0');
+            labelsPesos.push(dataFormatada);
             if(weightChartInstance) weightChartInstance.update();
         }
 
-        function deletarHistorico(event, btnElement) {
+        window.deletarHistorico = (event, btnElement) => {
             event.stopPropagation(); 
             const item = btnElement.closest('.history-item');
             item.style.transform = 'scale(0.9)'; item.style.opacity = '0';
             setTimeout(() => { item.remove(); }, 300);
+        };
+
+        // INTEGRAÇÃO DE API DE IA (MOCK PREPARADO)
+        async function chamarAPIdeIA(textoOcrCru) {
+            // AQUI ENTRARIA O FETCH REAL PARA A OPENAI OU GEMINI API.
+            // Ex: fetch('https://api.openai.com/v1/chat/completions', { ... })
+            
+            // Simulação de resposta interpretada pela IA baseada num scan genérico
+            return `
+                <div class="card glass slide-up" style="animation-delay: 0.1s; border-left: 4px solid var(--neon-green);">
+                    <h3 class="neon-text-green">✓ Benefícios Identificados</h3>
+                    <ul class="clean-list">
+                        <li>Presença de micronutrientes essenciais detectada.</li>
+                        <li>Baixo índice de gorduras saturadas.</li>
+                    </ul>
+                </div>
+                <div class="card glass slide-up" style="animation-delay: 0.2s; border-left: 4px solid #F6AD55;">
+                    <h3 class="text-warning">⚠ Pontos de Atenção</h3>
+                    <ul class="clean-list">
+                        <li>Identificado conservantes artificiais (INS).</li>
+                        <li>Pode conter traços de alérgenos se houver sensibilidade.</li>
+                    </ul>
+                </div>
+            `;
         }
 
-        function abrirRelatorio() {
+        window.abrirRelatorio = () => {
             document.querySelector('.nav-item[data-target="scanner"]').click();
             document.getElementById('capture-area').classList.add('hidden');
             document.getElementById('preview-area').classList.add('hidden');
             document.getElementById('loading-area').classList.add('hidden');
+            
+            // Simula injeção de laudo ao abrir histórico
+            document.getElementById('dynamic-ai-results').innerHTML = `
+                <div class="card glass slide-up" style="animation-delay: 0.1s; border-left: 4px solid var(--neon-green);">
+                    <h3 class="neon-text-green">✓ Benefícios (Histórico)</h3><ul class="clean-list"><li>Rico em proteínas.</li></ul>
+                </div>
+            `;
             document.getElementById('result-area').classList.remove('hidden');
             document.getElementById('historico-area').classList.add('hidden'); 
-        }
+        };
 
         function recalcularMatematicaHome() {
             try {
-                const nomeMeta = document.getElementById('nome-meta').value || "Sua Meta";
-                const peso = parseFloat(document.getElementById('peso').value); 
-                const altura = parseFloat(document.getElementById('altura').value); 
+                const nomeMeta = document.getElementById('nome-meta').value;
+                const peso = parseFloat(document.getElementById('peso').value) || 0; 
+                const altura = parseFloat(document.getElementById('altura').value) || 1.85; 
                 const sexo = document.getElementById('sexo').value;
-                const objetivoSelect = document.getElementById('objetivo');
-                const objetivo = objetivoSelect.value;
-                const pesoIdeal = parseFloat(document.getElementById('peso-ideal').value);
-                const duracaoDias = parseInt(document.getElementById('duracao-dias').value);
+                const objetivo = document.getElementById('objetivo').value;
+                const pesoIdeal = parseFloat(document.getElementById('peso-ideal').value) || 0;
+                
+                const dataInicioStr = document.getElementById('data-inicio').value;
+                const dataTerminoStr = document.getElementById('data-termino').value;
+                let duracaoDias = 90; 
 
-                document.getElementById('display-nome-meta').textContent = nomeMeta;
+                if(dataInicioStr && dataTerminoStr) {
+                    const dInicio = new Date(dataInicioStr + 'T00:00:00');
+                    const dTermino = new Date(dataTerminoStr + 'T00:00:00');
+                    const diffTempo = dTermino - dInicio;
+                    duracaoDias = Math.ceil(diffTempo / (1000 * 60 * 60 * 24));
+                }
+
+                document.getElementById('display-nome-meta').textContent = nomeMeta || "Projeto NutriScan";
 
                 if(peso && altura) {
                     const imc = (peso / (altura * altura)).toFixed(1);
@@ -532,60 +499,126 @@
                     if (tdee < tmb && objetivo === 'emagrecimento') tdee = tmb; 
                 }
 
-                const proteina = Math.round(peso * 2.2);
-                const gordura = Math.round(peso * 1.0);
-                const caloriasTotais = Math.round(tdee);
+                const proteina = Math.round(peso * 2.2) || 1;
+                const gordura = Math.round(peso * 1.0) || 1;
+                const caloriasTotais = Math.round(tdee) || 2000;
                 let carboidrato = Math.round((tdee - (proteina * 4) - (gordura * 9)) / 4);
-                if (carboidrato < 0) carboidrato = 0; 
+                if (carboidrato < 1) carboidrato = 1; 
 
+                // Atualização Exata Reativa
                 const consumido = { prot: 140, carb: 200, gord: 50, cal: 1800 };
+                
                 document.getElementById('val-prot').textContent = `${consumido.prot} / ${proteina}g`;
-                document.querySelectorAll('.bar-fill')[0].style.width = `${Math.min((consumido.prot/proteina)*100, 100)}%`;
+                document.getElementById('bar-prot').style.width = `${Math.min((consumido.prot/proteina)*100, 100)}%`;
+                
                 document.getElementById('val-carb').textContent = `${consumido.carb} / ${carboidrato}g`;
-                document.querySelectorAll('.bar-fill')[1].style.width = `${Math.min((consumido.carb/carboidrato)*100, 100)}%`;
+                document.getElementById('bar-carb').style.width = `${Math.min((consumido.carb/carboidrato)*100, 100)}%`;
+                
                 document.getElementById('val-gord').textContent = `${consumido.gord} / ${gordura}g`;
-                document.querySelectorAll('.bar-fill')[2].style.width = `${Math.min((consumido.gord/gordura)*100, 100)}%`;
+                document.getElementById('bar-gord').style.width = `${Math.min((consumido.gord/gordura)*100, 100)}%`;
+                
                 document.getElementById('val-cal').textContent = `${consumido.cal} / ${caloriasTotais} kcal`;
-                document.querySelectorAll('.bar-fill')[3].style.width = `${Math.min((consumido.cal/caloriasTotais)*100, 100)}%`;
+                document.getElementById('bar-cal').style.width = `${Math.min((consumido.cal/caloriasTotais)*100, 100)}%`;
 
-                document.getElementById('dias-restantes').textContent = `${duracaoDias}d`;
+                if(dataTerminoStr) {
+                    const hoje = new Date();
+                    const dTermino = new Date(dataTerminoStr + 'T00:00:00');
+                    hoje.setHours(0,0,0,0);
+                    dTermino.setHours(0,0,0,0);
+                    const diffTempoHome = dTermino - hoje;
+                    const diasRestantesHome = Math.max(0, Math.ceil(diffTempoHome / (1000 * 60 * 60 * 24)));
+                    document.getElementById('dias-restantes').textContent = `${diasRestantesHome}d`;
+                } else {
+                    document.getElementById('dias-restantes').textContent = `${duracaoDias}d`;
+                }
+                
                 document.getElementById('display-peso-atual').textContent = `${peso} kg`;
                 
                 if(pesoIdeal && peso) {
                     const diff = (pesoIdeal - peso).toFixed(1);
-                    if(diff > 0) document.getElementById('display-peso-falta').textContent = `Faltam ganhar ${diff} kg`;
-                    else if (diff < 0) document.getElementById('display-peso-falta').textContent = `Faltam perder ${Math.abs(diff)} kg`;
-                    else document.getElementById('display-peso-falta').textContent = `Meta atingida!`;
+                    if(diff > 0) {
+                        document.getElementById('display-peso-falta').textContent = `Meta: ${pesoIdeal} kg (Faltam ganhar ${diff} kg)`;
+                    } else if (diff < 0) {
+                        document.getElementById('display-peso-falta').textContent = `Meta: ${pesoIdeal} kg (Faltam perder ${Math.abs(diff)} kg)`;
+                    } else {
+                        document.getElementById('display-peso-falta').textContent = `Meta atingida!`;
+                    }
                 }
-            } catch(e) { console.log("Erro no calculo", e); }
+            } catch(e) { console.log(e); }
         }
 
-        function entrarNoApp(statusText, nomeConfig, saudacao) {
-            document.getElementById('auth').classList.remove('active');
-            document.getElementById('home').classList.add('active');
-            document.getElementById('main-header').classList.remove('hidden');
-            document.getElementById('main-nav').classList.remove('hidden');
+        async function salvarMetaNoFirestore(uid) {
+            try {
+                const dadosMeta = {
+                    nomeMeta: document.getElementById('nome-meta').value,
+                    dataInicio: document.getElementById('data-inicio').value,
+                    dataTermino: document.getElementById('data-termino').value,
+                    altura: parseFloat(document.getElementById('altura').value),
+                    peso: parseFloat(document.getElementById('peso').value),
+                    objetivo: document.getElementById('objetivo').value,
+                    pesoIdeal: parseFloat(document.getElementById('peso-ideal').value)
+                };
+                await setDoc(doc(db, "users", uid), dadosMeta, { merge: true });
+            } catch(e) { console.error("Erro Firestore ao salvar meta:", e); }
+        }
+
+        const carregarFotoLocal = () => {
+            const fotoBase64 = localStorage.getItem('nutriscan_avatar');
+            if(fotoBase64) {
+                document.getElementById('avatar-img').src = fotoBase64;
+                document.getElementById('avatar-img').style.display = 'block';
+                document.getElementById('avatar-initials').style.display = 'none';
+            }
+        };
+
+        const entrarNoApp = (targetScreen, statusText, nomeConfig, saudacao) => {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(targetScreen).classList.add('active');
             
-            document.getElementById('status-badge').innerHTML = `Status: <span class="neon-text-blue">${statusText}</span>`;
-            document.getElementById('config-nome-display').textContent = nomeConfig;
-            document.getElementById('display-user-greeting').textContent = saudacao;
-        }
+            if(targetScreen === 'home') {
+                document.getElementById('main-header').classList.remove('hidden');
+                document.getElementById('main-nav').classList.remove('hidden');
+                document.getElementById('status-badge').innerHTML = `Status: <span class="neon-text-blue">${statusText}</span>`;
+                
+                const nomeSalvo = localStorage.getItem('nutriscan_nome') || nomeConfig;
+                document.getElementById('config-user-name').value = nomeSalvo;
+                document.getElementById('display-user-greeting').textContent = saudacao;
+                carregarFotoLocal();
+            }
+        };
 
-        // ==========================================================
-        // EVENTOS PRINCIPAIS
-        // ==========================================================
         window.addEventListener('load', () => {
-
             setTimeout(() => {
                 const splash = document.getElementById('splash-screen');
-                if(splash) {
-                    splash.style.opacity = '0';
-                    setTimeout(() => { splash.classList.add('hidden'); }, 400);
-                }
-            }, 1500);
+                if(splash) { splash.style.opacity = '0'; setTimeout(() => { splash.classList.add('hidden'); }, 400); }
+            }, 1000);
+
+            // Valores de data padrão
+            const hoje = new Date();
+            const futuro = new Date();
+            futuro.setDate(hoje.getDate() + 30);
+            document.getElementById('data-inicio').value = hoje.toISOString().split('T')[0];
+            document.getElementById('data-termino').value = futuro.toISOString().split('T')[0];
+
+            if(localStorage.getItem('nutriscan_theme') === 'light') document.body.classList.add('light-mode');
 
             recalcularMatematicaHome();
             inicializarGrafico();
+
+            // Sincronizar nome editado nas configurações em tempo real
+            document.getElementById('config-user-name').addEventListener('input', (e) => {
+                const novoNome = e.target.value;
+                document.getElementById('display-user-greeting').textContent = "Olá, " + novoNome;
+                localStorage.setItem('nutriscan_nome', novoNome);
+            });
+
+            // MODO DE TEMA LOCAL
+            const toggleTheme = () => {
+                document.body.classList.toggle('light-mode');
+                localStorage.setItem('nutriscan_theme', document.body.classList.contains('light-mode') ? 'light' : 'dark');
+            };
+            document.getElementById('theme-toggle').addEventListener('click', toggleTheme);
+            document.getElementById('btn-toggle-theme-list').addEventListener('click', toggleTheme);
 
             // LOGIN
             document.getElementById('btn-login-manual').addEventListener('click', (e) => {
@@ -593,42 +626,95 @@
                 const email = document.getElementById('login-email').value.trim().toLowerCase();
                 const pwd = document.getElementById('login-password').value.trim();
 
+                if (!email || !pwd) { alert("Preencha todos os campos!"); return; }
+                signInWithEmailAndPassword(auth, email, pwd).catch(err => alert("Erro ao fazer login: Verifique seu e-mail e senha."));
+            });
+
+            // CADASTRO
+            document.getElementById('btn-register').addEventListener('click', (e) => {
+                e.preventDefault();
+                const email = document.getElementById('login-email').value.trim().toLowerCase();
+                const pwd = document.getElementById('login-password').value.trim();
+
+                if (!email || !pwd) { alert("Preencha e-mail e senha!"); return; }
+                createUserWithEmailAndPassword(auth, email, pwd)
+                    .then(() => alert('Conta criada com sucesso no Firebase! Acesso 7 dias grátis.'))
+                    .catch(err => alert("Erro: " + err.message));
+            });
+
+            // RESET SENHA
+            document.getElementById('link-forgot-pwd').addEventListener('click', (e) => {
+                e.preventDefault();
+                const email = document.getElementById('login-email').value.trim();
+                if(!email) {
+                    alert("Por favor, digite o seu e-mail no campo de login primeiro para receber o reset de senha.");
+                    return;
+                }
+                sendPasswordResetEmail(auth, email)
+                    .then(() => alert('E-mail de redefinição de senha enviado com sucesso! Verifique sua caixa de entrada.'))
+                    .catch(err => alert("Erro: " + err.message));
+            });
+
+            // ADMIN SEGURO - Somente logado e verificado
+            document.getElementById('link-admin-panel').addEventListener('click', (e) => {
+                e.preventDefault();
+                const email = document.getElementById('login-email').value.trim().toLowerCase();
+                const pwd = document.getElementById('login-password').value.trim();
+
                 if (email === 'bno229@gmail.com' && pwd === '290519') {
-                    // ADMIN
-                    document.getElementById('auth').classList.remove('active');
-                    document.getElementById('admin').classList.add('active');
-                } else if (email === 'blackcatwinesloja@gmail.com' && pwd === '290519') {
-                    // MASTER
-                    entrarNoApp('PRO (Vitalício)', 'Master Black Cat', 'Olá, Master');
+                    // Valida a sessão localmente antes de direcionar
+                    signInWithEmailAndPassword(auth, email, pwd).then(() => {
+                        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+                        document.getElementById('admin').classList.add('active');
+                    }).catch(err => alert("Acesso negado. Credenciais Master inválidas."));
                 } else {
-                    alert('Credenciais incorretas ou usuário não encontrado.');
+                    alert("Acesso restrito. Digite as credenciais de administrador nos campos acima para prosseguir.");
                 }
             });
 
-            document.getElementById('btn-register').addEventListener('click', (e) => {
-                e.preventDefault();
-                alert('Conta criada com sucesso! Você ganhou 7 dias grátis de acesso total.');
-                entrarNoApp('Free (7 Dias Restantes)', 'Novo Usuário', 'Olá, Usuário');
+            document.getElementById('btn-voltar-login-admin').addEventListener('click', () => {
+                signOut(auth).then(() => location.reload());
             });
 
-            // BOTÕES MODO DESENVOLVEDOR (COMO BACKUP SE AINDA TRAVAR)
-            document.getElementById('btn-test-admin').addEventListener('click', (e) => {
-                e.preventDefault();
-                document.getElementById('auth').classList.remove('active');
-                document.getElementById('admin').classList.add('active');
-            });
-            document.getElementById('btn-test-master').addEventListener('click', (e) => {
-                e.preventDefault();
-                entrarNoApp('PRO (Vitalício)', 'Master Black Cat', 'Olá, Master');
+            // ESCUTADOR DE ESTADO FIREBASE E CARREGAMENTO DE DADOS (FIRESTORE)
+            onAuthStateChanged(auth, async (user) => {
+                if (user) {
+                    try {
+                        const userDoc = await getDoc(doc(db, "users", user.uid));
+                        if(userDoc.exists()) {
+                            const data = userDoc.data();
+                            if(data.nomeMeta) document.getElementById('nome-meta').value = data.nomeMeta;
+                            if(data.dataInicio) document.getElementById('data-inicio').value = data.dataInicio;
+                            if(data.dataTermino) document.getElementById('data-termino').value = data.dataTermino;
+                            if(data.altura) document.getElementById('altura').value = data.altura;
+                            if(data.peso) document.getElementById('peso').value = data.peso;
+                            if(data.objetivo) document.getElementById('objetivo').value = data.objetivo;
+                            if(data.pesoIdeal) document.getElementById('peso-ideal').value = data.pesoIdeal;
+                            pesoInicialMeta = data.peso || 69.0;
+                        }
+                    } catch(f) { console.log("Nenhum dado em nuvem."); }
+
+                    recalcularMatematicaHome();
+
+                    if (user.email === 'bno229@gmail.com') {
+                        entrarNoApp('admin', 'Admin Master', 'Fabiano Ferreira', 'Olá, Fabiano');
+                    } else if (user.email === 'blackcatwinesloja@gmail.com') {
+                        entrarNoApp('home', 'PRO (Vitalício)', 'Master Black Cat', 'Olá, Master');
+                    } else {
+                        entrarNoApp('home', 'Free (7 Dias Restantes)', 'Usuário Standard', 'Olá, Usuário');
+                    }
+                } else {
+                    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+                    document.getElementById('auth').classList.add('active');
+                    document.getElementById('main-header').classList.add('hidden');
+                    document.getElementById('main-nav').classList.add('hidden');
+                }
             });
 
-
-            document.getElementById('btn-voltar-login').addEventListener('click', () => { location.reload(); });
-            document.getElementById('btn-logout').addEventListener('click', () => { location.reload(); });
+            document.getElementById('btn-logout').addEventListener('click', () => signOut(auth));
 
             // NAVEGAÇÃO
             const navItems = document.querySelectorAll('.nav-item');
-            const screens = document.querySelectorAll('.screen');
             navItems.forEach(item => {
                 item.addEventListener('click', () => {
                     navItems.forEach(nav => nav.classList.remove('active'));
@@ -641,7 +727,7 @@
                         document.getElementById('result-area').classList.add('hidden');
                     }
 
-                    screens.forEach(s => s.classList.remove('active'));
+                    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
                     const targetScreen = document.getElementById(targetId);
                     if(targetScreen) {
                         targetScreen.classList.add('active');
@@ -650,50 +736,55 @@
                 });
             });
 
-            // TEMA
-            document.getElementById('theme-toggle').addEventListener('click', () => document.body.classList.toggle('light-mode'));
-            document.getElementById('btn-toggle-theme-list').addEventListener('click', () => document.body.classList.toggle('light-mode'));
-
-            // FUNCIONALIDADES EXTRAS
-            document.getElementById('btn-salvar-meta').addEventListener('click', () => {
+            // SALVAR METAS E ATUALIZAR NUVEM
+            document.getElementById('btn-salvar-meta').addEventListener('click', async () => {
                 recalcularMatematicaHome();
+                if(auth.currentUser) { await salvarMetaNoFirestore(auth.currentUser.uid); }
                 document.querySelector('.nav-item[data-target="home"]').click();
             });
 
-            document.getElementById('btn-atualizar-peso').addEventListener('click', () => {
+            // ATUALIZAR PESO E MENSAGENS INTELIGENTES
+            document.getElementById('btn-atualizar-peso').addEventListener('click', async () => {
                 const novoPeso = parseFloat(document.getElementById('input-novo-peso').value);
+                const pesoIdeal = parseFloat(document.getElementById('peso-ideal').value);
+                const objetivo = document.getElementById('objetivo').value;
+                const feedbackBox = document.getElementById('feedback-peso');
+                
                 if(novoPeso) {
                     document.getElementById('peso').value = novoPeso; 
                     recalcularMatematicaHome();
                     atualizarGrafico(novoPeso);
                     document.getElementById('input-novo-peso').value = '';
+                    
+                    feedbackBox.className = "feedback-banner";
+                    feedbackBox.style.display = "block";
+
+                    let evoluindo = false;
+                    if (objetivo === 'hipertrofia' && novoPeso > pesoInicialMeta) evoluindo = true;
+                    if (objetivo === 'emagrecimento' && novoPeso < pesoInicialMeta) evoluindo = true;
+
+                    if(novoPeso === pesoIdeal) {
+                        feedbackBox.classList.add("feedback-success");
+                        feedbackBox.innerHTML = "🏆 <b>INCRÍVEL! META ATINGIDA!</b> Você alcançou o seu peso ideal. Parabéns pelo foco!";
+                        confetti({ particleCount: 200, spread: 90, origin: { y: 0.6 } });
+                    } else if (evoluindo) {
+                        feedbackBox.classList.add("feedback-success");
+                        feedbackBox.innerHTML = "👏 <b>Parabéns!</b> Você está evoluindo e mantendo o ritmo. Continue firme!";
+                        confetti({ particleCount: 50, spread: 40, origin: { y: 0.7 } });
+                    } else {
+                        feedbackBox.classList.add("feedback-incentive");
+                        feedbackBox.innerHTML = "🔥 <b>Força e Constância!</b> Ajuste a alimentação hoje e mantenha a disciplina. Não desista!";
+                    }
+
+                    if(auth.currentUser) {
+                        try { await updateDoc(doc(db, "users", auth.currentUser.uid), { peso: novoPeso }); } catch(e){}
+                    }
                 }
             });
 
             document.getElementById('btn-notification').addEventListener('click', () => {
-                alert("Lembrete: Atualize seu peso de hoje!");
+                alert("Lembrete NutriScan: Mantenha sua meta em dia! Já registrou seu peso hoje?");
                 document.querySelector('.notification-dot').style.display = 'none'; 
-            });
-
-            // WEB SHARE API
-            document.getElementById('btn-share-wa').addEventListener('click', async () => {
-                const peso = document.getElementById('display-peso-atual').innerText;
-                const meta = document.getElementById('display-nome-meta').innerText;
-                const imc = document.getElementById('display-imc').innerText;
-                const msg = `Estou no foco do projeto *${meta}* com o NutriScan AI! 💪\nMeu peso atual é ${peso} (IMC: ${imc}).\nAcompanhe minha evolução!`;
-                
-                if (navigator.share) {
-                    try {
-                        await navigator.share({
-                            title: 'Minha Evolução NutriScan',
-                            text: msg,
-                        });
-                    } catch (err) {
-                        console.log('Compartilhamento cancelado ou com erro.', err);
-                    }
-                } else {
-                    window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`, '_blank');
-                }
             });
 
             document.getElementById('btn-novo-scan').addEventListener('click', () => {
@@ -702,12 +793,15 @@
                 document.getElementById('historico-area').classList.remove('hidden');
             });
 
+            // FOTO DE PERFIL LOCAL
             document.getElementById('photo-upload').addEventListener('change', function(e) {
                 const file = e.target.files[0];
                 if (file) {
                     const reader = new FileReader();
                     reader.onload = function(evt) {
-                        document.getElementById('avatar-img').src = evt.target.result;
+                        const b64 = evt.target.result;
+                        localStorage.setItem('nutriscan_avatar', b64);
+                        document.getElementById('avatar-img').src = b64;
                         document.getElementById('avatar-img').style.display = 'block';
                         document.getElementById('avatar-initials').style.display = 'none';
                     }
@@ -715,7 +809,7 @@
                 }
             });
 
-            // OCR
+            // SCANNER CAMERA SIMULAÇÃO
             const cameraInput = document.getElementById('camera-input');
             const galleryInput = document.getElementById('gallery-input');
             document.getElementById('btn-foto').addEventListener('click', () => cameraInput.click());
@@ -727,20 +821,24 @@
                     document.getElementById('historico-area').classList.add('hidden');
                     document.getElementById('loading-area').classList.remove('hidden');
                     
-                    setTimeout(() => {
+                    // Simula envio para a IA
+                    setTimeout(async () => {
+                        const respostaIA = await chamarAPIdeIA("texto raw do OCR");
+                        document.getElementById('dynamic-ai-results').innerHTML = respostaIA;
+                        
                         document.getElementById('loading-area').classList.add('hidden');
                         document.getElementById('result-area').classList.remove('hidden');
-                    }, 2000);
+                    }, 2500);
                 }
             };
             cameraInput.addEventListener('change', handleImageSelect);
             galleryInput.addEventListener('change', handleImageSelect);
         });
 
-        // REGISTRO DE SERVICE WORKER PARA PRODUÇÃO
+        // Limpa Service Worker Antigo para não bugar no PC Localmente
         if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js').then(r => console.log('SW registrado')).catch(e => console.log('SW erro', e));
+            navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                for(let registration of registrations) { registration.unregister(); }
             });
         }
     </script>

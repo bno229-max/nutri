@@ -9,6 +9,7 @@
     <meta name="theme-color" content="#0B0F1A">
     <link rel="apple-touch-icon" href="./icon-192.png">
 
+    <!-- Motores Externos (OCR, Gráficos e Celebração) -->
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
@@ -79,7 +80,6 @@
         
         .history-list { display: flex; flex-direction: column; gap: 12px; margin-top: 10px;} .history-item { display: flex; justify-content: space-between; align-items: center; padding: 15px; transition: transform 0.2s; cursor: pointer; } .history-item:hover { border-color: var(--neon-blue); } .history-item:active { transform: scale(0.98); } .history-info h4 { margin: 0; font-size: 1rem; } .history-info .date { font-size: 0.75rem; color: var(--text-sec); } .history-score { font-size: 1.2rem; font-weight: bold; } .history-actions { display: flex; align-items: center; gap: 12px; } .delete-btn { padding: 6px; border-radius: 8px; background: rgba(252, 129, 129, 0.1); transition: 0.3s; } .delete-btn:hover { background: rgba(252, 129, 129, 0.3); }
         
-        /* Câmera Scanner UI Restaurada ao modelo original */
         .scanner-box { padding: 40px 20px; border: 2px dashed var(--glass-border); border-radius: 16px; background: rgba(0,0,0,0.2); } 
         .scanner-icon { width: 80px; height: 80px; margin: 0 auto 20px; background: rgba(0, 229, 255, 0.1); border-radius: 50%; display: flex; justify-content: center; align-items: center; animation: pulse 2s infinite; } 
         .btn-group { display: flex; flex-direction: column; gap: 10px; }
@@ -95,7 +95,7 @@
         .admin-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.85rem; } .admin-table th, .admin-table td { padding: 10px; border-bottom: 1px solid var(--glass-border); text-align: left; } .admin-table th { color: var(--neon-blue); }
         
         .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; height: 75px; background: var(--nav-glass); display: flex; justify-content: space-between; align-items: center; border-radius: 20px 20px 0 0; z-index: 1000; padding: 0 10px; transition: transform 0.3s ease;} 
-        .nav-item { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: var(--text-sec); cursor: pointer; font-size: 0.75rem; transition: color 0.3s; flex: 1; height: 100%; overflow: hidden; } 
+        .nav-item { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: var(--text-sec); cursor: pointer; font-size: 0.75rem; transition: color 0.3s; flex: 1; height: 100%; overflow: visible; } 
         .nav-item.active { color: var(--neon-blue); } .nav-item.active svg { stroke: var(--neon-blue); } 
         .scanner-btn-wrapper { position: relative; flex: 1.2; display: flex; flex-direction: column; align-items: center; } 
         .scanner-btn { position: absolute; top: -30px; width: 65px; height: 65px; border-radius: 50%; display: flex; justify-content: center; align-items: center; transition: transform 0.3s; } 
@@ -134,6 +134,9 @@
 
     <main id="app-container">
 
+        <!-- ========================================================== -->
+        <!-- TELA 0: AUTENTICAÇÃO / LOGIN -->
+        <!-- ========================================================== -->
         <section id="auth" class="screen active fade-in">
             <div class="card glass text-center mt-2 slide-up">
                 <h2 class="neon-text-blue mb-2">Bem-vindo(a)</h2>
@@ -159,6 +162,9 @@
             </div>
         </section>
 
+        <!-- ========================================================== -->
+        <!-- TELA ADMIN -->
+        <!-- ========================================================== -->
         <section id="admin" class="screen fade-in">
             <div class="card glass slide-up">
                 <h2 class="neon-text-blue">Painel Administrativo</h2>
@@ -187,6 +193,9 @@
             </div>
         </section>
 
+        <!-- ========================================================== -->
+        <!-- TELA 1: HOME -->
+        <!-- ========================================================== -->
         <section id="home" class="screen fade-in">
             <h3 class="text-center neon-text-blue mb-1" id="display-nome-meta">Projeto NutriScan</h3>
 
@@ -208,20 +217,42 @@
                 </div>
                 <p id="display-peso-falta" class="text-sec text-small mt-1 text-center">Meta: -- kg</p>
                 <div id="feedback-peso" class="feedback-banner"></div>
-                <div style="position: relative; height: 180px; width: 100%; margin-top: 10px;"><canvas id="weightChart"></canvas></div>
+                
+                <div style="position: relative; height: 180px; width: 100%; margin-top: 10px;">
+                    <canvas id="weightChart"></canvas>
+                </div>
             </div>
 
             <div class="card glass macros-card mt-1 slide-up" style="animation-delay: 0.1s;">
-                <h3>Resumo de Macros Diário</h3>
+                <h3>Meta de Consumo Diário</h3>
                 <div class="chart-container">
-                    <div class="chart-row"><span class="chart-label">Proteínas</span><div class="bar-bg"><div class="bar-fill neon-bg-blue" id="bar-prot" style="width: 0%;"></div></div><span class="chart-value" id="val-prot">0 / 0g</span></div>
-                    <div class="chart-row"><span class="chart-label">Carbos</span><div class="bar-bg"><div class="bar-fill neon-bg-green" id="bar-carb" style="width: 0%;"></div></div><span class="chart-value" id="val-carb">0 / 0g</span></div>
-                    <div class="chart-row"><span class="chart-label">Gorduras</span><div class="bar-bg"><div class="bar-fill" id="bar-gord" style="background: #F6AD55; width: 0%;"></div></div><span class="chart-value" id="val-gord">0 / 0g</span></div>
-                    <div class="chart-row"><span class="chart-label">Calorias</span><div class="bar-bg"><div class="bar-fill" id="bar-cal" style="background: #FC8181; width: 0%;"></div></div><span class="chart-value" id="val-cal">0 / 0 kcal</span></div>
+                    <div class="chart-row"><span class="chart-label">Proteínas</span><div class="bar-bg"><div class="bar-fill neon-bg-blue" id="bar-prot" style="width: 0%;"></div></div><span class="chart-value" id="val-prot">--g</span></div>
+                    <div class="chart-row"><span class="chart-label">Carbos</span><div class="bar-bg"><div class="bar-fill neon-bg-green" id="bar-carb" style="width: 0%;"></div></div><span class="chart-value" id="val-carb">--g</span></div>
+                    <div class="chart-row"><span class="chart-label">Gorduras</span><div class="bar-bg"><div class="bar-fill" id="bar-gord" style="background: #F6AD55; width: 0%;"></div></div><span class="chart-value" id="val-gord">--g</span></div>
+                    <div class="chart-row"><span class="chart-label">Calorias</span><div class="bar-bg"><div class="bar-fill" id="bar-cal" style="background: #FC8181; width: 0%;"></div></div><span class="chart-value" id="val-cal">-- kcal</span></div>
+                </div>
+            </div>
+
+            <div class="card glass mt-1 slide-up" style="animation-delay: 0.2s;">
+                <h3>Histórico de Metas</h3>
+                <div class="history-list" id="meta-history-list">
+                    <div class="history-item card glass" style="padding: 12px;">
+                        <div class="history-info">
+                            <h4 id="current-meta-name-history">Shape Verão</h4>
+                            <span class="date text-sec" id="current-meta-date-history">-- (Em andamento)</span>
+                        </div>
+                        <div class="history-actions">
+                            <button class="icon-btn text-link" style="margin:0; padding:5px;" onclick="document.querySelector('.nav-item[data-target=\'meta\']').click()">✏️</button>
+                            <button class="icon-btn delete-btn" style="padding:5px;" onclick="window.deletarHistorico(event, this)">🗑️</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
 
+        <!-- ========================================================== -->
+        <!-- TELA 2: META (PERFIL BIOMÉTRICO) -->
+        <!-- ========================================================== -->
         <section id="meta" class="screen fade-in">
             <div class="text-center mb-2">
                 <h2>Ajuste sua Meta</h2>
@@ -265,21 +296,22 @@
             </div>
         </section>
 
+        <!-- ========================================================== -->
+        <!-- TELA 3: SCANNER E RESULTADOS -->
+        <!-- ========================================================== -->
         <section id="scanner" class="screen fade-in">
             
-            <div id="capture-area" class="card glass text-center">
+            <div id="capture-area" class="card glass text-center scanner-box">
                 <div class="scanner-icon">
                     <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="var(--neon-blue)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
                 </div>
-                <h2>Scanner Inteligente</h2>
+                <h2>Scanner de Rótulos</h2>
                 <p class="text-sec mb-2">Fotografe a tabela ou lista de ingredientes do produto.</p>
-                <div class="scanner-box">
-                    <div class="btn-group">
-                        <input type="file" id="camera-input" accept="image/*" capture="environment" class="hidden">
-                        <input type="file" id="gallery-input" accept="image/*" class="hidden">
-                        <button id="btn-foto" class="btn primary-btn glow-effect">📸 Tirar Foto Real</button>
-                        <button id="btn-importar" class="btn secondary-btn">🖼️ Importar da Galeria</button>
-                    </div>
+                <div class="btn-group mt-2">
+                    <input type="file" id="camera-input" accept="image/*" capture="environment" class="hidden">
+                    <input type="file" id="gallery-input" accept="image/*" class="hidden">
+                    <button id="btn-foto" class="btn primary-btn glow-effect">📸 Tirar Foto Real</button>
+                    <button id="btn-importar" class="btn secondary-btn">🖼️ Importar da Galeria</button>
                 </div>
             </div>
 
@@ -297,7 +329,8 @@
             <div id="result-area" class="hidden fade-in mt-1">
                 <div class="card glass text-center result-header"><h2 class="neon-text-blue">Laudo da Análise IA</h2></div>
                 <div class="result-grid mt-2" id="dynamic-ai-results">
-                    </div>
+                    <!-- Respostas da API Injetadas Aqui -->
+                </div>
                 <button id="btn-novo-scan" class="btn secondary-btn mt-2 w-100">Fazer Nova Análise</button>
             </div>
 
@@ -312,6 +345,9 @@
             </div>
         </section>
 
+        <!-- ========================================================== -->
+        <!-- TELA 4: PLANOS -->
+        <!-- ========================================================== -->
         <section id="plans" class="screen fade-in">
             <h2 class="text-center mb-2">Desbloqueie seu Potencial</h2>
             
@@ -336,6 +372,9 @@
             </div>
         </section>
 
+        <!-- ========================================================== -->
+        <!-- TELA 5: CONFIGURAÇÕES -->
+        <!-- ========================================================== -->
         <section id="settings" class="screen fade-in">
             <div class="card glass profile-card text-center slide-up">
                 <div class="avatar-container">
@@ -361,17 +400,19 @@
 
     </main>
 
+    <!-- NAVBAR INFERIOR -->
     <nav class="bottom-nav glass hidden" id="main-nav">
         <div class="nav-item active" data-target="home"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg><span>Home</span></div>
         <div class="nav-item" data-target="meta"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg><span>Meta</span></div>
         <div class="scanner-btn-wrapper nav-item" data-target="scanner"><div class="scanner-btn neon-bg-blue"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#121826" stroke-width="2"><path d="M5 4h4l2-3h6l2 3h4v14H5z"></path><circle cx="12" cy="11" r="3"></circle></svg></div><span class="scanner-label">Scan</span></div>
         <div class="nav-item" data-target="plans"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg><span>Planos</span></div>
         <div class="nav-item" data-target="settings">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
             <span>Config</span>
         </div>
     </nav>
 
+    <!-- FIREBASE E MOTOR DE INTERFACE -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
@@ -390,14 +431,20 @@
         const db = getFirestore(app);
 
         let weightChartInstance = null;
-        let historicoPesos = [69.0]; 
-        let labelsPesos = ['Início'];
-        let pesoInicialMeta = 69.0;
+        let historicoPesos = []; 
+        let labelsPesos = [];
+        let pesoInicialMeta = 0;
 
         function inicializarGrafico() {
             try {
                 const canvas = document.getElementById('weightChart');
                 if(!canvas) return;
+                
+                // Evita criar duplo gráfico se já existir
+                if (weightChartInstance) {
+                    weightChartInstance.destroy();
+                }
+
                 weightChartInstance = new Chart(canvas.getContext('2d'), {
                     type: 'line',
                     data: { labels: labelsPesos, datasets: [{ label: 'Evolução (kg)', data: historicoPesos, borderColor: '#00E5FF', backgroundColor: 'rgba(0, 229, 255, 0.1)', borderWidth: 3, pointBackgroundColor: '#00FFB3', pointBorderColor: '#fff', pointRadius: 5, fill: true, tension: 0.3 }] },
@@ -411,7 +458,11 @@
             const hoje = new Date();
             const dataFormatada = String(hoje.getDate()).padStart(2, '0') + '/' + String(hoje.getMonth() + 1).padStart(2, '0');
             labelsPesos.push(dataFormatada);
-            if(weightChartInstance) weightChartInstance.update();
+            if(weightChartInstance) {
+                weightChartInstance.update();
+            } else {
+                inicializarGrafico();
+            }
         }
 
         window.deletarHistorico = (event, btnElement) => {
@@ -423,10 +474,6 @@
 
         // INTEGRAÇÃO DE API DE IA (MOCK PREPARADO)
         async function chamarAPIdeIA(textoOcrCru) {
-            // AQUI ENTRARIA O FETCH REAL PARA A OPENAI OU GEMINI API.
-            // Ex: fetch('https://api.openai.com/v1/chat/completions', { ... })
-            
-            // Simulação de resposta interpretada pela IA baseada num scan genérico
             return `
                 <div class="card glass slide-up" style="animation-delay: 0.1s; border-left: 4px solid var(--neon-green);">
                     <h3 class="neon-text-green">✓ Benefícios Identificados</h3>
@@ -451,10 +498,9 @@
             document.getElementById('preview-area').classList.add('hidden');
             document.getElementById('loading-area').classList.add('hidden');
             
-            // Simula injeção de laudo ao abrir histórico
             document.getElementById('dynamic-ai-results').innerHTML = `
                 <div class="card glass slide-up" style="animation-delay: 0.1s; border-left: 4px solid var(--neon-green);">
-                    <h3 class="neon-text-green">✓ Benefícios (Histórico)</h3><ul class="clean-list"><li>Rico em proteínas.</li></ul>
+                    <h3 class="neon-text-green">✓ Benefícios (Histórico)</h3><ul class="clean-list"><li>Cultura ativa de bactérias benéficas para a flora intestinal.</li></ul>
                 </div>
             `;
             document.getElementById('result-area').classList.remove('hidden');
@@ -464,24 +510,29 @@
         function recalcularMatematicaHome() {
             try {
                 const nomeMeta = document.getElementById('nome-meta').value;
-                const peso = parseFloat(document.getElementById('peso').value) || 0; 
-                const altura = parseFloat(document.getElementById('altura').value) || 1.85; 
-                const sexo = document.getElementById('sexo').value;
+                const pesoStr = document.getElementById('peso').value;
+                const peso = pesoStr ? parseFloat(pesoStr) : 0; 
+                const alturaStr = document.getElementById('altura').value;
+                const altura = alturaStr ? parseFloat(alturaStr) : 1.85; 
+                const sexo = document.getElementById('sexo').value || 'M';
                 const objetivo = document.getElementById('objetivo').value;
-                const pesoIdeal = parseFloat(document.getElementById('peso-ideal').value) || 0;
+                const pesoIdealStr = document.getElementById('peso-ideal').value;
+                const pesoIdeal = pesoIdealStr ? parseFloat(pesoIdealStr) : 0;
                 
                 const dataInicioStr = document.getElementById('data-inicio').value;
                 const dataTerminoStr = document.getElementById('data-termino').value;
-                let duracaoDias = 90; 
+                let duracaoDias = 30; 
 
                 if(dataInicioStr && dataTerminoStr) {
                     const dInicio = new Date(dataInicioStr + 'T00:00:00');
                     const dTermino = new Date(dataTerminoStr + 'T00:00:00');
                     const diffTempo = dTermino - dInicio;
                     duracaoDias = Math.ceil(diffTempo / (1000 * 60 * 60 * 24));
+                    if (duracaoDias <= 0) duracaoDias = 30; // Proteção contra datas invertidas
                 }
 
                 document.getElementById('display-nome-meta').textContent = nomeMeta || "Projeto NutriScan";
+                document.getElementById('current-meta-name-history').textContent = nomeMeta || "Projeto NutriScan";
 
                 if(peso && altura) {
                     const imc = (peso / (altura * altura)).toFixed(1);
@@ -494,31 +545,37 @@
                 tmb = sexo === 'M' ? tmb + 5 : tmb - 161;
                 let tdee = tmb * 1.55; 
 
-                if (pesoIdeal && duracaoDias > 0) {
-                    tdee += ((pesoIdeal - peso) * 7700) / duracaoDias;
-                    if (tdee < tmb && objetivo === 'emagrecimento') tdee = tmb; 
+                // Previne calculo negativo se não houver peso ideal setado e corrige a lógica de deficit
+                if (pesoIdeal > 0 && duracaoDias > 0 && pesoIdeal !== peso) {
+                    const diffKcal = (pesoIdeal - peso) * 7700;
+                    tdee += (diffKcal / duracaoDias);
+                    if (tdee < 1200) tdee = 1200; // Proteção de segurança calórica mínima
+                } else {
+                    if (objetivo === 'hipertrofia') tdee += 300;
+                    if (objetivo === 'emagrecimento') tdee -= 500;
                 }
 
                 const proteina = Math.round(peso * 2.2) || 1;
                 const gordura = Math.round(peso * 1.0) || 1;
-                const caloriasTotais = Math.round(tdee) || 2000;
-                let carboidrato = Math.round((tdee - (proteina * 4) - (gordura * 9)) / 4);
-                if (carboidrato < 1) carboidrato = 1; 
+                let caloriasTotais = Math.round(tdee) || 2000;
+                let carboidrato = Math.round((caloriasTotais - (proteina * 4) - (gordura * 9)) / 4);
+                
+                if (carboidrato < 0) {
+                    carboidrato = 0;
+                    caloriasTotais = (proteina * 4) + (gordura * 9);
+                }
 
-                // Atualização Exata Reativa
-                const consumido = { prot: 140, carb: 200, gord: 50, cal: 1800 };
+                document.getElementById('val-prot').textContent = `${proteina}g`;
+                document.getElementById('bar-prot').style.width = `${((proteina * 4) / caloriasTotais) * 100}%`;
                 
-                document.getElementById('val-prot').textContent = `${consumido.prot} / ${proteina}g`;
-                document.getElementById('bar-prot').style.width = `${Math.min((consumido.prot/proteina)*100, 100)}%`;
+                document.getElementById('val-carb').textContent = `${carboidrato}g`;
+                document.getElementById('bar-carb').style.width = `${((carboidrato * 4) / caloriasTotais) * 100}%`;
                 
-                document.getElementById('val-carb').textContent = `${consumido.carb} / ${carboidrato}g`;
-                document.getElementById('bar-carb').style.width = `${Math.min((consumido.carb/carboidrato)*100, 100)}%`;
+                document.getElementById('val-gord').textContent = `${gordura}g`;
+                document.getElementById('bar-gord').style.width = `${((gordura * 9) / caloriasTotais) * 100}%`;
                 
-                document.getElementById('val-gord').textContent = `${consumido.gord} / ${gordura}g`;
-                document.getElementById('bar-gord').style.width = `${Math.min((consumido.gord/gordura)*100, 100)}%`;
-                
-                document.getElementById('val-cal').textContent = `${consumido.cal} / ${caloriasTotais} kcal`;
-                document.getElementById('bar-cal').style.width = `${Math.min((consumido.cal/caloriasTotais)*100, 100)}%`;
+                document.getElementById('val-cal').textContent = `${caloriasTotais} kcal`;
+                document.getElementById('bar-cal').style.width = `100%`;
 
                 if(dataTerminoStr) {
                     const hoje = new Date();
@@ -528,6 +585,13 @@
                     const diffTempoHome = dTermino - hoje;
                     const diasRestantesHome = Math.max(0, Math.ceil(diffTempoHome / (1000 * 60 * 60 * 24)));
                     document.getElementById('dias-restantes').textContent = `${diasRestantesHome}d`;
+                    
+                    if(dataInicioStr) {
+                        const dIni = new Date(dataInicioStr + 'T00:00:00');
+                        const dataFmtIni = String(dIni.getDate()).padStart(2, '0') + '/' + String(dIni.getMonth() + 1).padStart(2, '0');
+                        const dataFmtFim = String(dTermino.getDate()).padStart(2, '0') + '/' + String(dTermino.getMonth() + 1).padStart(2, '0');
+                        document.getElementById('current-meta-date-history').textContent = `${dataFmtIni} a ${dataFmtFim} (Em andamento)`;
+                    }
                 } else {
                     document.getElementById('dias-restantes').textContent = `${duracaoDias}d`;
                 }
@@ -545,21 +609,6 @@
                     }
                 }
             } catch(e) { console.log(e); }
-        }
-
-        async function salvarMetaNoFirestore(uid) {
-            try {
-                const dadosMeta = {
-                    nomeMeta: document.getElementById('nome-meta').value,
-                    dataInicio: document.getElementById('data-inicio').value,
-                    dataTermino: document.getElementById('data-termino').value,
-                    altura: parseFloat(document.getElementById('altura').value),
-                    peso: parseFloat(document.getElementById('peso').value),
-                    objetivo: document.getElementById('objetivo').value,
-                    pesoIdeal: parseFloat(document.getElementById('peso-ideal').value)
-                };
-                await setDoc(doc(db, "users", uid), dadosMeta, { merge: true });
-            } catch(e) { console.error("Erro Firestore ao salvar meta:", e); }
         }
 
         const carregarFotoLocal = () => {
@@ -593,7 +642,6 @@
                 if(splash) { splash.style.opacity = '0'; setTimeout(() => { splash.classList.add('hidden'); }, 400); }
             }, 1000);
 
-            // Valores de data padrão
             const hoje = new Date();
             const futuro = new Date();
             futuro.setDate(hoje.getDate() + 30);
@@ -602,14 +650,21 @@
 
             if(localStorage.getItem('nutriscan_theme') === 'light') document.body.classList.add('light-mode');
 
+            // Carrega mock local pro visual inicial até o firebase injetar
+            historicoPesos = [67.0];
+            labelsPesos = ['Início'];
+            
             recalcularMatematicaHome();
             inicializarGrafico();
 
-            // Sincronizar nome editado nas configurações em tempo real
-            document.getElementById('config-user-name').addEventListener('input', (e) => {
+            // Sincronizar nome editado (Salva no Firestore com setDoc merge)
+            document.getElementById('config-user-name').addEventListener('blur', async (e) => {
                 const novoNome = e.target.value;
                 document.getElementById('display-user-greeting').textContent = "Olá, " + novoNome;
                 localStorage.setItem('nutriscan_nome', novoNome);
+                if(auth.currentUser) {
+                    await setDoc(doc(db, "users", auth.currentUser.uid), { nomeUsuario: novoNome }, { merge: true });
+                }
             });
 
             // MODO DE TEMA LOCAL
@@ -655,14 +710,13 @@
                     .catch(err => alert("Erro: " + err.message));
             });
 
-            // ADMIN SEGURO - Somente logado e verificado
+            // ADMIN SEGURO
             document.getElementById('link-admin-panel').addEventListener('click', (e) => {
                 e.preventDefault();
                 const email = document.getElementById('login-email').value.trim().toLowerCase();
                 const pwd = document.getElementById('login-password').value.trim();
 
                 if (email === 'bno229@gmail.com' && pwd === '290519') {
-                    // Valida a sessão localmente antes de direcionar
                     signInWithEmailAndPassword(auth, email, pwd).then(() => {
                         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
                         document.getElementById('admin').classList.add('active');
@@ -690,18 +744,42 @@
                             if(data.peso) document.getElementById('peso').value = data.peso;
                             if(data.objetivo) document.getElementById('objetivo').value = data.objetivo;
                             if(data.pesoIdeal) document.getElementById('peso-ideal').value = data.pesoIdeal;
-                            pesoInicialMeta = data.peso || 69.0;
+                            
+                            if(data.nomeUsuario) {
+                                document.getElementById('config-user-name').value = data.nomeUsuario;
+                                document.getElementById('display-user-greeting').textContent = "Olá, " + data.nomeUsuario;
+                                localStorage.setItem('nutriscan_nome', data.nomeUsuario);
+                            }
+                            if(data.fotoPerfil) {
+                                localStorage.setItem('nutriscan_avatar', data.fotoPerfil);
+                                document.getElementById('avatar-img').src = data.fotoPerfil;
+                                document.getElementById('avatar-img').style.display = 'block';
+                                document.getElementById('avatar-initials').style.display = 'none';
+                            }
+                            
+                            // Restaura o histórico de pesos se existir
+                            if(data.historicoPesos && data.labelsPesos) {
+                                historicoPesos = data.historicoPesos;
+                                labelsPesos = data.labelsPesos;
+                            } else {
+                                historicoPesos = [data.peso || 69.0];
+                                const hIni = new Date(data.dataInicio || data.dataTermino || new Date());
+                                labelsPesos = [String(hIni.getDate()).padStart(2, '0') + '/' + String(hIni.getMonth() + 1).padStart(2, '0')];
+                            }
+                            
+                            pesoInicialMeta = historicoPesos[0] || 69.0;
                         }
                     } catch(f) { console.log("Nenhum dado em nuvem."); }
 
                     recalcularMatematicaHome();
+                    inicializarGrafico(); // Atualiza gráfico com dados nuvem
 
                     if (user.email === 'bno229@gmail.com') {
-                        entrarNoApp('admin', 'Admin Master', 'Fabiano Ferreira', 'Olá, Fabiano');
+                        entrarNoApp('admin', 'Admin Master', '', '');
                     } else if (user.email === 'blackcatwinesloja@gmail.com') {
-                        entrarNoApp('home', 'PRO (Vitalício)', 'Master Black Cat', 'Olá, Master');
+                        entrarNoApp('home', 'PRO (Vitalício)', '', '');
                     } else {
-                        entrarNoApp('home', 'Free (7 Dias Restantes)', 'Usuário Standard', 'Olá, Usuário');
+                        entrarNoApp('home', 'Free (7 Dias Restantes)', '', '');
                     }
                 } else {
                     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -736,10 +814,44 @@
                 });
             });
 
-            // SALVAR METAS E ATUALIZAR NUVEM
+            // SALVAR METAS E ATUALIZAR NUVEM (Com Reset de Histórico se For Nova Meta)
             document.getElementById('btn-salvar-meta').addEventListener('click', async () => {
-                recalcularMatematicaHome();
-                if(auth.currentUser) { await salvarMetaNoFirestore(auth.currentUser.uid); }
+                const pesoValue = parseFloat(document.getElementById('peso').value);
+                historicoPesos = [pesoValue];
+                
+                const dInicioStr = document.getElementById('data-inicio').value;
+                if(dInicioStr) {
+                    const dIni = new Date(dInicioStr + 'T00:00:00');
+                    labelsPesos = [String(dIni.getDate()).padStart(2, '0') + '/' + String(dIni.getMonth() + 1).padStart(2, '0')];
+                } else {
+                    labelsPesos = ['Início'];
+                }
+
+                pesoInicialMeta = pesoValue;
+                recalcularMatematicaHome(); 
+                inicializarGrafico(); // Força reconstrução limpa
+
+                if(auth.currentUser) { 
+                    try {
+                        const dadosMeta = {
+                            nomeMeta: document.getElementById('nome-meta').value,
+                            dataInicio: document.getElementById('data-inicio').value,
+                            dataTermino: document.getElementById('data-termino').value,
+                            altura: parseFloat(document.getElementById('altura').value),
+                            peso: pesoValue,
+                            objetivo: document.getElementById('objetivo').value,
+                            pesoIdeal: parseFloat(document.getElementById('peso-ideal').value),
+                            historicoPesos: historicoPesos,
+                            labelsPesos: labelsPesos
+                        };
+                        await setDoc(doc(db, "users", auth.currentUser.uid), dadosMeta, { merge: true });
+                    } catch(e) {}
+                }
+                
+                // Remove feedback banner if active
+                const fb = document.getElementById('feedback-peso');
+                if(fb) fb.style.display = 'none';
+
                 document.querySelector('.nav-item[data-target="home"]').click();
             });
 
@@ -767,6 +879,11 @@
                         feedbackBox.classList.add("feedback-success");
                         feedbackBox.innerHTML = "🏆 <b>INCRÍVEL! META ATINGIDA!</b> Você alcançou o seu peso ideal. Parabéns pelo foco!";
                         confetti({ particleCount: 200, spread: 90, origin: { y: 0.6 } });
+                        
+                        setTimeout(() => {
+                            recalcularMatematicaHome();
+                        }, 3000);
+
                     } else if (evoluindo) {
                         feedbackBox.classList.add("feedback-success");
                         feedbackBox.innerHTML = "👏 <b>Parabéns!</b> Você está evoluindo e mantendo o ritmo. Continue firme!";
@@ -777,7 +894,13 @@
                     }
 
                     if(auth.currentUser) {
-                        try { await updateDoc(doc(db, "users", auth.currentUser.uid), { peso: novoPeso }); } catch(e){}
+                        try { 
+                            await setDoc(doc(db, "users", auth.currentUser.uid), { 
+                                peso: novoPeso,
+                                historicoPesos: historicoPesos,
+                                labelsPesos: labelsPesos
+                            }, { merge: true }); 
+                        } catch(e){}
                     }
                 }
             });
@@ -793,23 +916,25 @@
                 document.getElementById('historico-area').classList.remove('hidden');
             });
 
-            // FOTO DE PERFIL LOCAL
+            // FOTO DE PERFIL NO FIRESTORE (setDoc)
             document.getElementById('photo-upload').addEventListener('change', function(e) {
                 const file = e.target.files[0];
                 if (file) {
                     const reader = new FileReader();
-                    reader.onload = function(evt) {
+                    reader.onload = async function(evt) {
                         const b64 = evt.target.result;
                         localStorage.setItem('nutriscan_avatar', b64);
                         document.getElementById('avatar-img').src = b64;
                         document.getElementById('avatar-img').style.display = 'block';
                         document.getElementById('avatar-initials').style.display = 'none';
+                        if(auth.currentUser) {
+                            await setDoc(doc(db, "users", auth.currentUser.uid), { fotoPerfil: b64 }, { merge: true });
+                        }
                     }
                     reader.readAsDataURL(file);
                 }
             });
 
-            // SCANNER CAMERA SIMULAÇÃO
             const cameraInput = document.getElementById('camera-input');
             const galleryInput = document.getElementById('gallery-input');
             document.getElementById('btn-foto').addEventListener('click', () => cameraInput.click());
@@ -835,7 +960,7 @@
             galleryInput.addEventListener('change', handleImageSelect);
         });
 
-        // Limpa Service Worker Antigo para não bugar no PC Localmente
+        // Limpa Service Worker Antigo para não bugar localmente
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.getRegistrations().then(function(registrations) {
                 for(let registration of registrations) { registration.unregister(); }
